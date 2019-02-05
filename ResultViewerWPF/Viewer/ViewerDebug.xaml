@@ -1,0 +1,17 @@
+﻿<Window x:Class="ResultViewerWPF.Viewer.ViewerDebug"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ResultViewerWPF.Viewer"
+        mc:Ignorable="d"
+        Title="ViewerDebug" Height="555.487" Width="567.694" WindowStyle="ToolWindow">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <TextBox Grid.Row="0" x:Name="DebugInfo" TextChanged="DebugInfo_TextChanged"/>
+        <Button x:Name="SaveButton" Grid.Row="1" Width="100" Content="Сохранить в .txt" Click="Button_Click"/>
+    </Grid>
+</Window>

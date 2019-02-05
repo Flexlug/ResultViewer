@@ -1,0 +1,79 @@
+﻿<Window x:Class="ResultViewerWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="ResultViewer" MinHeight="350" MinWidth="600" Height="350" Width="600" Background="White" Icon="Result_Viewer_Logo_00001.ico" Closing="Window_Closing" SizeChanged="Window_SizeChanged" LocationChanged="Window_LocationChanged">
+    <Window.Resources>
+        <Style x:Key="BigMainMenuButton">
+            <Setter Property="Button.FontSize" Value="20"/>
+            <Setter Property="Button.Width" Value="200"/>
+            <Setter Property="Button.Height" Value="40"/>
+            <Setter Property="Button.Margin" Value="6, 6, 6, 6"/>
+            <Setter Property="Button.Foreground" Value="Black"/>
+            <Setter Property="MenuItem.Background" Value="WhiteSmoke"/>
+        </Style>
+
+        <Style x:Key="TopMenu">
+            <Setter Property="MenuItem.Background" Value="Transparent"/>
+            <Setter Property="MenuItem.FontSize" Value="12"/>
+        </Style>
+            
+        <Style x:Key="LittleMainMenuButton">
+            <Setter Property="Button.FontSize" Value="15"/>
+            <Setter Property="Button.Margin" Value="5, 5, 5, 5"/>
+            <Setter Property="Button.Height" Value="30"/>
+            <Setter Property="Button.Width" Value="95"/>
+            <Setter Property="Button.Foreground" Value="Black"/>
+            <Setter Property="MenuItem.Background" Value="WhiteSmoke"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+
+        <Menu Height="35" Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" Background="Transparent">
+            <MenuItem Header="Данные">
+                <MenuItem Header="Открыть файл" x:Name="OpenCustomDir" Style="{StaticResource TopMenu}" Click="OpenCustomDir_Click"/>
+                <MenuItem Header="Сохранить файл" x:Name="SaveCustomDir" Style="{StaticResource TopMenu}" Click="SaveCustomDir_Click"/>
+                <MenuItem Header="Сброс баллов с результатами" x:Name="ResetPoints" Style="{StaticResource TopMenu}" Click="ResetPoints_Click"/>
+                <MenuItem Header="Сброс всех данных" x:Name="RemoveAllData" Style="{StaticResource TopMenu}" Click="RemoveAllData_Click"/>
+                <Separator Height="3" Margin="0" Background="Black" Width="200"/>
+                <MenuItem Header="Старый режим" x:Name="SwitchCompitabilityMode" Style="{StaticResource TopMenu}" IsCheckable="True" IsChecked="False" Click="SwitchCompitabilityMode_Click"/>
+            </MenuItem>
+            <MenuItem Header="Настройки" x:Name="SettingsButton" Style="{StaticResource TopMenu}" Click="SettingsButton_Click"/> 
+            <MenuItem Header="Справка" x:Name="DevInfo" Style="{StaticResource TopMenu}" Click="DevInfo_Click"/>
+        </Menu>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Label Margin="0, 10, 0, 0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Content="ResultViewer" FontSize="35" Foreground="Black" FontWeight="DemiBold"/>
+            <Label Margin="0, -10, 0, 0" HorizontalAlignment="Center" Content = "Программа для показа результатов разнообразных конкурсов" FontSize="19" Foreground="Black"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Button x:Name="LoadOrEditData" Style="{StaticResource BigMainMenuButton}" Content="Новые данные" HorizontalAlignment="Center" Click="LoadOrEditData_Click"/>
+            <Button x:Name="StartViewer" Style="{StaticResource BigMainMenuButton}" Content="Начать показ" HorizontalAlignment="Center" Click="StartViewer_Click"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="SaveData" Style="{StaticResource LittleMainMenuButton}" Content="Сохранить" Click="SaveData_Click"/>
+                <Button x:Name="LoadData" Style="{StaticResource LittleMainMenuButton}" Content="Загрузить" Click="LoadData_Click"/>
+            </StackPanel>
+        </StackPanel>
+
+        <Label x:Name="StatusBar" Margin="5, 5, 5, 5" Grid.Row="3" Content="Ожидание..."/>
+
+        <Button Grid.Column="1" Grid.Row="3" x:Name="QuickShow" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2" Content=">>" Width="25" Height="25" Visibility="Hidden" Click="QuickShow_Click"/>
+        <Button Grid.Column="1" Grid.Row="3" Click="Button_Click" Content="Test" Width="50" Height="20" FontSize="10" HorizontalAlignment="Right" Margin="0, 0, 50, 0" Visibility="Hidden"/>
+    </Grid>
+
+</Window>
