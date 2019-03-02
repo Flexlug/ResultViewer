@@ -55,8 +55,9 @@ namespace ResultViewerWPF.Viewer
             for (int i = 0; i < memberNames.Length; i++)
                 memberPanels.Add(new MemberBar(mainCanvas, memberNames[i], i));
 
-            UpdatePlaces();
+            
             SortMembers();
+            UpdatePlaces();
 
             // Инициализируем панель с финальной фразой
             finalPhrase = new JuryBar(mainCanvas, ProgramSettings.FinalPhrase);
@@ -116,9 +117,14 @@ namespace ResultViewerWPF.Viewer
             // Просчитаем сумму всех баллов
             finalPoints = new double[memberPanels.Count];
 
+            double point = 0;
+
             for (int jury = 0; jury < appLogic.GetJuryNames().Length; jury++)
                 for (int member = 0; member < memberPanels.Count; member++)
-                    finalPoints[member] += appLogic.GetPoint(jury, member);
+                    if ((point = appLogic.GetPoint(jury, member)) > 0)
+                        finalPoints[member] += point;
+
+            ShowValues.IsChecked = false;
 
             // Включим показ финала
             SetJury(ChooseJury.SelectedIndex);
@@ -169,6 +175,7 @@ namespace ResultViewerWPF.Viewer
                     }
         }
 
+
         /// <summary>
         /// Сортирует участников в соответствии с заданными настройками
         /// </summary>
@@ -181,7 +188,7 @@ namespace ResultViewerWPF.Viewer
             {
                 // Отсортируем тех, у кого уже есть баллы
                 membersWithPoints = memberPanels.Select(x => x)
-                                           .Where(x => x.Points != 0)
+                                           .Where(x => x.Points != 0 && !x.ShowMask)
                                            .OrderByDescending(x => x.Points)
                                            .ThenBy(x => x.Name)
                                            .ToList();
@@ -190,22 +197,32 @@ namespace ResultViewerWPF.Viewer
             {
                 // Отсортируем тех, у кого уже есть баллы
                 membersWithPoints = memberPanels.Select(x => x)
-                                                .Where(x => x.Points != 0)
+                                                .Where(x => x.Points != 0 && !x.ShowMask)
                                                 .OrderBy(x => x.Points)
                                                 .ThenBy(x => x.Name)
                                                 .ToList();
             }
 
-
+            // Отсортируем тех, кто отсутствовал или получил нулевой балл
+            List<MemberBar> absentMembers = null;
+            absentMembers = memberPanels.Select(x => x)
+                .Where(x => x.ShowMask == true)
+                .OrderBy(x => x.MemberMaskType)
+                .ToList();
 
             // Отсортируем тех, у кого нет баллов
             List<MemberBar> membersWithoutPoints = memberPanels.Select(x => x)
-                                       .Where(x => x.Points == 0)
+                                       .Where(x => x.Points == 0 && !x.ShowMask)
                                        .OrderBy(x => x.Name)
                                        .ToList();
 
             // Соединим два этих списка
             membersWithPoints.InsertRange(membersWithPoints.Count, membersWithoutPoints);
+
+            // Если есть те, кто отсутствовал или получил нулевой балл, то пусть тоже отображаются)))
+            if (absentMembers != null)
+                membersWithPoints.InsertRange(membersWithPoints.Count, absentMembers);
+
             memberPanels = membersWithPoints;
         }
 
@@ -224,10 +241,16 @@ namespace ResultViewerWPF.Viewer
 
                 // Присвоим просчитанные баллы участникам
                 for (int member = 0; member < memberPanels.Count; member++)
-                    (memberPanels.Find(panel => panel.ID == member)).Points = finalPoints[member];
+                {
+                    memberPanels.Find(panel => panel.ID == member).Points = finalPoints[member];
+                    memberPanels[member].ShowMask = false;
+                }
 
                 // Выключим отображение результатов
-                ShowValues.IsChecked = false;
+                if (ShowValues.IsChecked ?? false)
+                {
+                    ShowValues.IsChecked = false;
+                }
             }
             else
             {
@@ -241,6 +264,24 @@ namespace ResultViewerWPF.Viewer
                     memberBar = memberPanels.Find(panel => panel.ID == member);
                     memberBar.Points = appLogic.GetPoint(jury, member);
                     memberBar.Value = appLogic.GetValue(jury, member);
+
+                    if (memberBar.Points == Constants.MEMBER_NO_POINTS)
+                    {
+                        memberBar.MemberMaskType = MemberBar.MaskType.NoPoints;
+                        memberBar.ShowMask = true;
+                    }
+                    else
+                    {
+                        if (memberBar.Points == Constants.MEMBER_ABSENT)
+                        {
+                            memberBar.MemberMaskType = MemberBar.MaskType.Absent;
+                            memberBar.ShowMask = true;
+                        }
+                        else
+                        {
+                            memberBar.ShowMask = false;
+                        }
+                    }
                 }
 
             }
@@ -254,6 +295,16 @@ namespace ResultViewerWPF.Viewer
             // Обновим цвет первых трёх мест
             if (UseTopColors.IsChecked ?? false)
                 EnableTopColors(null, null);
+
+            // Если флажок на отображение результатов включён, но они еще невидимы, то включаем их
+            if ((ShowValues.IsChecked ?? false) && !memberPanels[0].ValueVisible)
+                foreach (MemberBar mem in memberPanels)
+                    mem.ToggleValue();
+
+            // Если флажок на отображение результатов отключен, но результаты отображаются, то выключим их
+            if ((!ShowValues.IsChecked ?? false) && memberPanels[0].ValueVisible)
+                foreach (MemberBar mem in memberPanels)
+                    mem.ToggleValue();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -360,12 +411,13 @@ namespace ResultViewerWPF.Viewer
         {
             if (ChooseJury.SelectedIndex == ChooseJury.Items.Count - 1)
             {
-                (sender as CheckBox).IsChecked = false;
                 e.Handled = true;
             }
-
-            foreach (MemberBar member in memberPanels)
-                member.ToggleValue();
+            else
+            {
+                foreach (MemberBar member in memberPanels)
+                    member.ToggleValue();
+            }
         }
 
         /// <summary>
@@ -373,8 +425,7 @@ namespace ResultViewerWPF.Viewer
         /// </summary>
         private void ShowValues_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (MemberBar member in memberPanels)
-                member.ToggleValue();
+            ShowValues_Checked(sender, e);
         }
 
         /// <summary>

@@ -98,9 +98,11 @@ namespace ResultViewerWPF
                 table.Add(new TableRow(name));
 
             // Заполним баллы
+            double point = 0;
             for (int jury = 0; jury < juryCount; jury++)
                 for (int member = 0; member < memberCount; member++)
-                    table[member].Points += appLogic.GetPoint(jury, member);
+                    if ((point = appLogic.GetPoint(jury, member)) > 0)
+                    table[member].Points += point;
 
             // Сортировка участников
             if (Viewer.ProgramSettings.MemberSortingMode == Viewer.ProgramSettings.SortingMode.Ascending)

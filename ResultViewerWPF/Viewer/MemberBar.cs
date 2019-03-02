@@ -65,7 +65,47 @@ namespace ResultViewerWPF.Viewer
                 if (memberPlace != null)
                     memberPlace.Content = $"{place}";
             }
-        }       
+        }
+
+        private bool _showMask = false;
+        /// <summary>
+        /// Отображение маски поверх баллов
+        /// </summary>
+        public bool ShowMask
+        {
+            get
+            {
+                return _showMask;
+            }
+            set
+            {
+                _showMask = value;
+
+                // Обновим счётчик баллов
+                Points = _numOfPoints;
+            }
+        }
+
+        /// <summary>
+        /// Тип маски, в зависимости от ситуации
+        /// </summary>
+        public enum MaskType
+        {
+            /// <summary>
+            /// У участника нет баллов в данном туре
+            /// </summary>
+            NoPoints,
+
+            /// <summary>
+            /// Участник отсутствовал в данном туре
+            /// </summary>
+            Absent
+        }
+
+        /// <summary>
+        /// Выбранный тип маски для данного участника
+        /// </summary>
+        public MaskType MemberMaskType = MaskType.NoPoints;
 
         /// <summary>
         /// Показывает, выделена ли панель участника первым цветом
@@ -87,8 +127,8 @@ namespace ResultViewerWPF.Viewer
         /// </summary>
         public Rectangle mainRectangle;
 
-        private double _numOfPoints = 0;
         Label memberPlace = null;
+        private double _numOfPoints = 0;
         /// <summary>
         /// Количество баллов, которое получил участник
         /// </summary>
@@ -101,8 +141,26 @@ namespace ResultViewerWPF.Viewer
             set
             {
                 _numOfPoints = value;
-                if (memberPoints != null)
-                    memberPoints.Content = $"{_numOfPoints}";
+                
+                if (_showMask)
+                {
+                    // Если включено отображение маски, то в зависимости от выбранной маски отображаем соответствующий символ
+                    switch (MemberMaskType)
+                    {
+                        case MaskType.Absent:
+                            memberPoints.Content = "Н";
+                            break;
+
+                        case MaskType.NoPoints:
+                            memberPoints.Content = "X";
+                            break;
+                    }
+                }
+                else
+                {
+                    if (memberPoints != null)
+                        memberPoints.Content = $"{_numOfPoints}";
+                }
             }
         }
 

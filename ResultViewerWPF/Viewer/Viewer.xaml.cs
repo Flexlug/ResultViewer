@@ -221,6 +221,9 @@ namespace ResultViewerWPF.Viewer
                                 memberPanels[i].Value = memberValues[currentJury][i];
                         }
 
+                        // Проверим, имеются ли участники, которые не получили в данном туре баллов
+                        CheckZeroPoints();
+
                         // Проверим, с какого жюри нам надо начать показ
                         if (ProgramSettings.StartJury != 0)
                         {
@@ -238,7 +241,7 @@ namespace ResultViewerWPF.Viewer
                             //Зададим начального жюри
                             currentJury = ProgramSettings.StartJury;
                         }
-                        
+
                         // Покажем жюри
                         GraphicsEngine.Appear(juryPanels[currentJury], (obj, ev) => {
                             isBusy = false;
@@ -340,7 +343,7 @@ namespace ResultViewerWPF.Viewer
                             });
                         }
                         else
-                        {                            
+                        {
                             // С этим жюри закончили. Проверяем, не последний ли это жюри
                             if (currentJury + 1 != juryPanels.Count)
                             {
@@ -369,6 +372,15 @@ namespace ResultViewerWPF.Viewer
                                         for (int i = 0; i < memberPanels.Count; i++)
                                             memberPanels[i].Value = memberValues[currentJury][i];
                                 }
+
+
+                                // Проверим, имеются ли участники, которые не получили в данном туре баллов
+                                CheckZeroPoints();
+
+                                // Обновим позиции участников
+                                SortMembers();
+                                for (int mem = 0; mem < memberPanels.Count; mem++)
+                                    GraphicsEngine.MoveTo(memberPanels[mem], coordinates.Member(mem));
 
                                 // Проявляем нового жюри, перемещаем его в центр
                                 GraphicsEngine.Appear(juryPanels[currentJury]);
@@ -424,7 +436,7 @@ namespace ResultViewerWPF.Viewer
                                 // Проверяем, надо ли проявить панели предварительных мест по достижении 
                                 if (ProgramSettings.MemberPlaceShowMode == ProgramSettings.PlaceShowMode.VisibleOnFS)
                                 {
-                                    foreach(MemberBar mem in memberPanels)
+                                    foreach (MemberBar mem in memberPanels)
                                     {
                                         GraphicsEngine.barAppear(new Bar() { mainPanel = mem.placePanel }, ProgramSettings.MemberPanelOpacity);
                                     }
@@ -438,6 +450,10 @@ namespace ResultViewerWPF.Viewer
                                 {
                                     isBusy = false;
                                 });
+
+                                // Выключаем все буквы
+                                for (int mem = 0; mem < memberPanels.Count; mem++)
+                                    memberPanels[mem].ShowMask = false;
 
                                 // Завершаем показ, включаем "заглушку"
                                 currentState = ShowState.FinalScreen;
@@ -483,7 +499,7 @@ namespace ResultViewerWPF.Viewer
             {
                 // Отсортируем тех, у кого уже есть баллы
                 membersWithPoints = memberPanels.Select(x => x)
-                                           .Where(x => x.Points != 0)
+                                           .Where(x => x.Points != 0 && !x.ShowMask)
                                            .OrderByDescending(x => x.Points)
                                            .ThenBy(x => x.Name)
                                            .ToList();
@@ -492,22 +508,32 @@ namespace ResultViewerWPF.Viewer
             {
                 // Отсортируем тех, у кого уже есть баллы
                 membersWithPoints = memberPanels.Select(x => x)
-                                                .Where(x => x.Points != 0)
+                                                .Where(x => x.Points != 0 && !x.ShowMask)
                                                 .OrderBy(x => x.Points)
                                                 .ThenBy(x => x.Name)
                                                 .ToList();
             }
 
-
+            // Отсортируем тех, кто отсутствовал или получил нулевой балл
+            List<MemberBar> absentMembers = null;
+            absentMembers = memberPanels.Select(x => x)
+                .Where(x => x.ShowMask == true)
+                .OrderBy(x => x.MemberMaskType)
+                .ToList();
 
             // Отсортируем тех, у кого нет баллов
             List<MemberBar> membersWithoutPoints = memberPanels.Select(x => x)
-                                       .Where(x => x.Points == 0)
+                                       .Where(x => x.Points == 0 && !x.ShowMask)
                                        .OrderBy(x => x.Name)
                                        .ToList();
 
             // Соединим два этих списка
             membersWithPoints.InsertRange(membersWithPoints.Count, membersWithoutPoints);
+
+            // Если есть те, кто отсутствовал или получил нулевой балл, то пусть тоже отображаются)))
+            if (absentMembers != null)
+                membersWithPoints.InsertRange(membersWithPoints.Count, absentMembers);
+
             memberPanels = membersWithPoints;
         }
 
@@ -531,7 +557,7 @@ namespace ResultViewerWPF.Viewer
                         if (memberPanels[i].Points == memberPanels[i - 1].Points)
                             memberPanels[i].Place = memberPanels[i - 1].Place;
                         else
-                            memberPanels[i].Place = i + 1;
+                            memberPanels[i].Place = i + 1
                     }
             }
             else
@@ -546,6 +572,42 @@ namespace ResultViewerWPF.Viewer
                         else
                             memberPanels[i].Place = memberPanels[i - 1].Place + 1;
                     }
+        }
+
+        /// <summary>
+        /// Проверить, есть ли участники, которые получили 0 баллов за данный тур или отсутствовали. Если есть, то  они получат соответствующую пометку
+        /// </summary>
+        private void CheckZeroPoints()
+        {
+            // Временные переменные для уменьшения количества вызовов функций
+            double currentPoint = 0;
+            MemberBar memPanel = null;
+
+            for (int mem = 0; mem < memberPanels.Count; mem++)
+            {
+                memPanel = memberPanels[mem];
+                currentPoint = appLogic.GetPoint(currentJury, memPanel.ID);
+
+                // Если участник не получил баллов, то пусть вместо баллов отображается X
+                if (currentPoint == Constants.MEMBER_NO_POINTS)
+                {
+                    memPanel.MemberMaskType = MemberBar.MaskType.NoPoints;
+                    memPanel.ShowMask = true;
+                }
+                else
+                {
+                    // Если участник отсутствовал в данном туре, то пусть вместо баллов отображается Н
+                    if (currentPoint == Constants.MEMBER_ABSENT)
+                    {
+                        memPanel.MemberMaskType = MemberBar.MaskType.Absent;
+                        memPanel.ShowMask = true;
+                    }
+                    else
+                    {
+                        memPanel.ShowMask = false;
+                    }
+                }
+            }
         }
         
         /// <summary>
@@ -585,9 +647,9 @@ namespace ResultViewerWPF.Viewer
         {
             if (ProgramSettings.MemberPointsMode == ProgramSettings.PointsMode.Standard)
             {
-                // Через цикл находим участника, у которого не нулевой балл
+                // Через цикл находим участника, у которого балл больше нуля
                 for (int mem = memberIterator; mem < memberPanels.Count; mem++)
-                    if (appLogic.GetPoint(currentJury, mem) != 0)
+                    if (appLogic.GetPoint(currentJury, mem) > 0)
                     {
                         memberIterator = mem;
                         return true;
@@ -605,8 +667,8 @@ namespace ResultViewerWPF.Viewer
 
                     // Проверим, есть ли еще баллы
                     for (memberIterator = 0; memberIterator < memberPanels.Count; memberIterator++)
-                        if (memberPoints[currentJury][memberIterator] != 0)
-                            // Не нулевой балл нашли, останавливаем цикл
+                        if (memberPoints[currentJury][memberIterator] > 0)
+                            // Балл, который больше нуля, нашли, останавливаем цикл
                             break;
 
                     // Проверим, нашла ли проверка хоть какой-то балл
@@ -615,7 +677,7 @@ namespace ResultViewerWPF.Viewer
 
                     // Что-то есть, ищем самый маленький балл
                     for (int i = 0; i < memberPanels.Count; i++)
-                        if (minimalPoint > memberPoints[currentJury][i] && memberPoints[currentJury][i] != 0)
+                        if (minimalPoint > memberPoints[currentJury][i] && memberPoints[currentJury][i] > 0)
                         {
                             memberIterator = i;
                             minimalPoint = memberPoints[currentJury][i];

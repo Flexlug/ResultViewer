@@ -117,5 +117,11 @@ namespace ResultViewerWPF.Viewer
                 return new Point((width / 2) - ProgramSettings.MemberPanelWidth / 2,
                                  (int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset - ProgramSettings.MemberPanelHeight / 2 + ProgramSettings.MemberInterval + (ProgramSettings.MemberPanelHeight + (ProgramSettings.MemberInterval + 1.4)) * PlaceInd));
         }
+
+        public Point LowerFrase()
+        {
+            return new Point((width / 2) - (ProgramSettings.LowerFraseWidth / 2),
+                             height - ProgramSettings.LowerFraseWidth / 2);
+        }
     }
 }

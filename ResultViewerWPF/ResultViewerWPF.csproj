@@ -93,6 +93,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Logic.cs" />
     <Compile Include="QuickResultShow.xaml.cs">
       <DependentUpon>QuickResultShow.xaml</DependentUpon>
@@ -116,6 +117,7 @@
     <Compile Include="Viewer\JuryBar.cs" />
     <Compile Include="Viewer\MemberBar.cs" />
     <Compile Include="Viewer\PointBar.cs" />
+    <Compile Include="Viewer\TextBar.cs" />
     <Compile Include="Viewer\Viewer.xaml.cs">
       <DependentUpon>Viewer.xaml</DependentUpon>
     </Compile>

@@ -155,6 +155,23 @@ namespace ResultViewerWPF
             PointsInput.Text = String.Empty;
         }
 
+        private string checkNumber(double pointsNum)
+        {
+            if (pointsNum == 0)
+            {
+                return "X";
+            }
+            else
+            {
+                if (pointsNum == -1)
+                {
+                    return "H";
+                }
+                else
+                    return pointsNum.ToString();
+            }
+        }
+
         private void ResetMemberData()
         {
             // Сохраняем индекс выбранного участника
@@ -170,7 +187,7 @@ namespace ResultViewerWPF
 
                 // Выводим данные в MemberList
                 for (int i = 0; i < memberNames.Length; i++)
-                    MemberList.Items.Add($"{memberNames[i]} -> баллов: {points[i]}");
+                    MemberList.Items.Add($"{memberNames[i]} -> баллов: {checkNumber(points[i])}");
             }
             else
             {
@@ -185,7 +202,7 @@ namespace ResultViewerWPF
                     {
                         Content = new TextBlock()
                         {
-                            Text = $"{memberNames[i]}\n-> Баллы: {points[i]}\n-> Результат: {values[i]}"
+                            Text = $"{memberNames[i]}\n-> Баллы: {checkNumber(points[i])}\n-> Результат: {values[i]}"
                         }
                     });
                 }
@@ -441,6 +458,34 @@ namespace ResultViewerWPF
         {
             // Уберём подсказку
             helpToolTip.IsOpen = false;
+        }
+
+        private void SetZeroPointsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Участник получил 0 баллов
+            PointsInput.Text = Constants.MEMBER_NO_POINTS.ToString();
+
+            // Если какие-то данные были обработаны
+            if (HandleInput())
+                // Сместим выделение на следующзего участника
+                MemberList.SelectedIndex++;
+
+            // Перезагрузим список участников, чтобы прогрузить новые данные
+            ResetMemberData();
+        }
+
+        private void SetAbsentButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Участник отсутствовал
+            PointsInput.Text = Constants.MEMBER_ABSENT.ToString();
+
+            // Если какие-то данные были обработаны
+            if (HandleInput())
+                // Сместим выделение на следующзего участника
+                MemberList.SelectedIndex++;
+
+            // Перезагрузим список участников, чтобы прогрузить новые данные
+            ResetMemberData();
         }
 
         //private void ValuesInput_LostFocus(object sender, RoutedEventArgs e)
