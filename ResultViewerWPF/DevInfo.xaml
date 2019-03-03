@@ -16,7 +16,7 @@
             <Label FontSize="15" HorizontalAlignment="Center" Margin="0, 0, 0, -10">При поддержке: Владислав Чернышев,</Label>
             <Label FontSize="15" HorizontalAlignment="Center" Margin="0, 0, 0, -10">Андрей Кружков</Label>
             <Label FontSize="15" HorizontalAlignment="Center" Margin="0, 10, 0, 10">Заказчик: Шагов Артём Фёдорович</Label>
-            <Label FontFamily="12" HorizontalAlignment="Center">Версия: 1.1.0</Label>
+            <Label FontFamily="12" HorizontalAlignment="Center">Версия: 1.1.0.2</Label>
             <!--
             <TextBlock HorizontalAlignment="Center" FontSize="10">
                 <Run>Автор: Flexlug</Run>
