@@ -120,8 +120,8 @@ namespace ResultViewerWPF.Viewer
 
         public Point LowerFrase()
         {
-            return new Point((width / 2) - (ProgramSettings.LowerFraseWidth / 2),
-                             height - ProgramSettings.LowerFraseWidth / 2);
+            return new Point((width / 2) - (ProgramSettings.LowerPhraseWidth / 2),
+                             height - ProgramSettings.LowerPhraseWidth / 2);
         }
     }
 }

@@ -20,11 +20,6 @@ namespace ResultViewerWPF.Viewer
         public string[] TextLines;
 
         /// <summary>
-        /// Главная панель, на которой будут расположены все TextBlock-и
-        /// </summary>
-        private StackPanel mainPanel = null;
-
-        /// <summary>
         /// Стандартный публичный конструктор
         /// </summary>
         public TextBar()
@@ -34,7 +29,7 @@ namespace ResultViewerWPF.Viewer
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                
+                Orientation = Orientation.Vertical
             };
 
             // Инициализируем TranslateTransform
@@ -42,8 +37,6 @@ namespace ResultViewerWPF.Viewer
             BarTG.Children.Add(new TranslateTransform());
             BarTG.Children.Add(new ScaleTransform());
             mainPanel.RenderTransform = BarTG;
-
-
         }
     }
 }

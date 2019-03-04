@@ -113,7 +113,7 @@ namespace ResultViewerWPF.Viewer
         public bool IsChosen = false;
 
         /// <summary>
-        /// Показывает, отображает ли на данный момент 
+        /// Показывает, отображает ли на данный момент панель с дополнительными результатами
         /// </summary>
         public bool ValueVisible;
 

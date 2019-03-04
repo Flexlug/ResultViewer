@@ -46,7 +46,7 @@
                 <Label HorizontalAlignment="Center" x:Name="ChosenMember" Content="Выберете участника" FontSize="18" FontWeight="DemiBold"/>
                 <Label HorizontalAlignment="Center" Content="Введите балл (место):" FontSize="12"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button x:Name="SetZeroPointsButton" Click="SetZeroPointsButton_Click" Content="X" Width="25" Height="23" Margin="0, 0, 10, 0" ToolTip="Жюри присвоил 0 баллов данному участнику"/>
+                    <Button x:Name="SetZeroPointsButton" Click="SetZeroPointsButton_Click" Content="X" Width="25" Height="23" Margin="0, 0, 10, 0" ToolTip="Результат у данного участника отсутствует"/>
                     <TextBox TabIndex="5" x:Name="PointsInput" Width="50" PreviewTextInput="PointsInput_PreviewTextInput"/>
                     <Button x:Name="SetAbsentButton" Click="SetAbsentButton_Click" Content="Н" Width="25" Height="23" Margin="10, 0, 0, 0" ToolTip="Данный участник отсутствовал в данном туре"/>
                 </StackPanel>

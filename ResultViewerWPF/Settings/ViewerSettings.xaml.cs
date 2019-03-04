@@ -113,6 +113,8 @@ namespace ResultViewerWPF.Settings
             ChangeMemberPanelUseSecondShooseColor.IsChecked = ProgramSettings.MemberPanelUseSecondChooseColor;
             ShowMemberPanelChosenColor2.Background = new SolidColorBrush(ProgramSettings.MemberPanelChosenColor2);
 
+            ChangeMemberPanelHighlightLeaders.IsChecked = ProgramSettings.MemberPanelHighlightLeaders;
+
             ShowMemberPanelFirstPlace.Background = new SolidColorBrush(ProgramSettings.MemberPanelFirstPlace);
             ShowMemberPanelSecondPlace.Background = new SolidColorBrush(ProgramSettings.MemberPanelSecondPlace);
             ShowMemberPanelThirdPlace.Background = new SolidColorBrush(ProgramSettings.MemberPanelThirdPlace);

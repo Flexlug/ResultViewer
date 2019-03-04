@@ -10,8 +10,8 @@
         <Button x:Name="ToggleSettingsButton" Canvas.Top="5" Canvas.Left="5" Width="80" Content="Открыть" Click="ToggleSettingsMenu" Panel.ZIndex="10001"/>
         <Button x:Name="ApplySettingsButton" Canvas.Left="5" Width="80" Content="Обновить" Canvas.Top="35" Panel.ZIndex="10002" Click="ApplySettingsButton_Click"/>
         <ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="{Binding ElementName=MainCanvas, Path=ActualHeight}" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">
-            <!--<ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="5000" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">-->
-            <StackPanel Width="200" Margin="5" FlowDirection="LeftToRight">
+        <!--<ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="5000" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">-->
+        <StackPanel Width="200" Margin="5" FlowDirection="LeftToRight">
                 <GroupBox Header="Сброс" Margin="5">
                     <StackPanel Margin="5">
                         <Button Content="Сбросить настройки" ToolTip="Сбросить настройки до стандартных значений" Click="SetDefaultSettings"/>
@@ -446,6 +446,10 @@
                             </StackPanel>
                         </GroupBox>
 
+                        <GroupBox Header="Пояснения">
+                            
+                        </GroupBox>
+                        
                         <GroupBox Header="Расстановка объектов">
                             <StackPanel>
                                 <Label Content="Режим сортировки" ToolTip="Режим сортировки участников (сортировка идёт только по баллам)"/>

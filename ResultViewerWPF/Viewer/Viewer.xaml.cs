@@ -557,7 +557,7 @@ namespace ResultViewerWPF.Viewer
                         if (memberPanels[i].Points == memberPanels[i - 1].Points)
                             memberPanels[i].Place = memberPanels[i - 1].Place;
                         else
-                            memberPanels[i].Place = i + 1
+                            memberPanels[i].Place = i + 1;
                     }
             }
             else
@@ -667,53 +667,56 @@ namespace ResultViewerWPF.Viewer
 
                     // Проверим, есть ли еще баллы
                     for (memberIterator = 0; memberIterator < memberPanels.Count; memberIterator++)
-                        if (memberPoints[currentJury][memberIterator] > 0)
-                            // Балл, который больше нуля, нашли, останавливаем цикл
+                        if (memberPoints[currentJury][memberIterator] >= 0)
+                            // Балл, который не вляется служебной константой (ABSENT, NO_POINTS) нашли, останавливаем цикл
                             break;
 
                     // Проверим, нашла ли проверка хоть какой-то балл
                     if (memberIterator == memberPanels.Count)
+                        // Если итератор достиг предела, значит баллов больше нет и цикл можно останавливать
                         return false;
 
                     // Что-то есть, ищем самый маленький балл
                     for (int i = 0; i < memberPanels.Count; i++)
-                        if (minimalPoint > memberPoints[currentJury][i] && memberPoints[currentJury][i] > 0)
+                        if (minimalPoint > memberPoints[currentJury][i] && memberPoints[currentJury][i] >= 0)
                         {
                             memberIterator = i;
                             minimalPoint = memberPoints[currentJury][i];
                         }
 
-                    // Самый минимальный балл нашли, обнулим найденный балл
-                    memberPoints[currentJury][memberIterator] = 0;
+                    // Минимальный балл нашли, пометим балл использованным
+                    memberPoints[currentJury][memberIterator] = Constants.VIEWER_POINT_USED;
 
                     return true;
                 }
 
                 // Баллы выдаются в порядке убывания
+
                 if (ProgramSettings.MemberPointsMode == ProgramSettings.PointsMode.Descending)
                 {
                     double maxPoints = double .MinValue;
 
                     // Проверим, есть ли еще баллы
                     for (memberIterator = 0; memberIterator < memberPanels.Count; memberIterator++)
-                        if (memberPoints[currentJury][memberIterator] != 0)
-                            // Не нулевой балл нашли, останавливаем цикл
+                        if (memberPoints[currentJury][memberIterator] >= 0)
+                            // Балл, который не вляется служебной константой (ABSENT, NO_POINTS) нашли, останавливаем цикл
                             break;
 
                     // Проверим, нашла ли проверка хоть какой-то балл
                     if (memberIterator == memberPanels.Count)
+                        // Если итератор достиг предела, значит баллов больше нет и цикл можно останавливать
                         return false;
 
                     // Ищем максимальный балл
                     for (int i = 0; i < memberPanels.Count; i++)
-                        if (maxPoints < memberPoints[currentJury][i] && memberPoints[currentJury][i] != 0)
+                        if (maxPoints < memberPoints[currentJury][i] && memberPoints[currentJury][i] >= 0)
                         {
                             memberIterator = i;
                             maxPoints = memberPoints[currentJury][memberIterator];
                         }
 
-                    // Самый большой балл нашли, обнулим найденный балл
-                    memberPoints[currentJury][memberIterator] = 0;
+                    // Максимальный балл нашли, пометим балл использованным
+                    memberPoints[currentJury][memberIterator] = Constants.VIEWER_POINT_USED;
 
                     return true;
                 }

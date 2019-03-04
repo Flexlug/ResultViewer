@@ -499,22 +499,27 @@ namespace ResultViewerWPF.Viewer
         /// <summary>
         /// Финальная фраза, отображаемая в коцне показа
         /// </summary>
-        public static string FinalPhrase = "Поздравляем победителей!";
+        public static string FinalPhrase = "Поздравляем победителей!"; 
 
         /// <summary>
         /// Расстояние между нижним краем экрана и нижним уведомлением
         /// </summary>
-        public static double LowerFraseOffset = 100;
+        public static double LowerPhraseOffset = 100; // TODO
 
         /// <summary>
         /// Ширина панели нижнего уведомления
         /// </summary>
-        public static double LowerFraseWidth = 200;
+        public static double LowerPhraseWidth = 200; // TODO
+
+        /// <summary>
+        /// Размер шрифта для нижней фразы
+        /// </summary>
+        public static double LowerPhraseFontHeight = 10; // TODO
 
         /// <summary>
         /// Текст нижнего уведомления
         /// </summary>
-        public static string LowerFrase = "Н - не явившиеся на конкурс X - не приславшие конкурсную работу";
+        public static string LowerFrase = "Н - не явившиеся на конкурс X - не приславшие конкурсную работу"; // TODO
 
         #endregion
 

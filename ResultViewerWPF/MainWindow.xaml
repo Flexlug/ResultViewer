@@ -73,7 +73,7 @@
         <Label x:Name="StatusBar" Margin="5, 5, 5, 5" Grid.Row="3" Content="Ожидание..."/>
 
         <Button Grid.Column="1" Grid.Row="3" x:Name="QuickShow" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2" Content=">>" Width="25" Height="25" Visibility="Hidden" Click="QuickShow_Click"/>
-        <Button Grid.Column="1" Grid.Row="3" Click="Button_Click" Content="Test" Width="50" Height="20" FontSize="10" HorizontalAlignment="Right" Margin="0, 0, 50, 0" Visibility="Visible"/>
+        <Button Grid.Column="1" Grid.Row="3" Click="Button_Click" Content="Test" Width="50" Height="20" FontSize="10" HorizontalAlignment="Right" Margin="0, 0, 50, 0" Visibility="Hidden"/>
     </Grid>
 
 </Window>

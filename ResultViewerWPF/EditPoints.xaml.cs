@@ -157,13 +157,13 @@ namespace ResultViewerWPF
 
         private string checkNumber(double pointsNum)
         {
-            if (pointsNum == 0)
+            if (pointsNum == Constants.MEMBER_NO_POINTS)
             {
                 return "X";
             }
             else
             {
-                if (pointsNum == -1)
+                if (pointsNum == Constants.MEMBER_ABSENT)
                 {
                     return "H";
                 }
