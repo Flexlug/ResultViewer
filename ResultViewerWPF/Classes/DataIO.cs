@@ -266,7 +266,17 @@ namespace ResultViewerWPF
 
             settings.Add(new XElement("BackgroundAnimPeriod", new XAttribute("Value", ProgramSettings.BackgroundAnimPeriod.TotalMilliseconds)));
             settings.Add(new XElement("BackgroundAppearTime", new XAttribute("Value", ProgramSettings.BackgroundAppearTime.TotalMilliseconds)));
-            
+
+            settings.Add(new XElement("LowerPhraseFontWeight", new XAttribute("Value", Settings.ViewerSettings.ConvertFontWeightToIndex(ProgramSettings.LowerPhraseFontWeight))));
+            settings.Add(new XElement("LowerPhraseFontColor", new XAttribute("A", ProgramSettings.LowerPhraseFontColor.A),
+                                                               new XAttribute("R", ProgramSettings.LowerPhraseFontColor.R),
+                                                               new XAttribute("G", ProgramSettings.LowerPhraseFontColor.G),
+                                                               new XAttribute("B", ProgramSettings.LowerPhraseFontColor.B)));
+            settings.Add(new XElement("LowerPhraseOffset", new XAttribute("Value", ProgramSettings.LowerPhraseOffset)));
+            settings.Add(new XElement("LowerPhraseFontSize", new XAttribute("Value", ProgramSettings.LowerPhraseFontSize)));
+            settings.Add(new XElement("LowerPhraseShowMode", new XAttribute("Value", (int)ProgramSettings.LowerPhraseShowMode)));
+            settings.Add(new XElement("LowerPhrase", new XAttribute("Value", ProgramSettings.LowerPhrase)));
+
             #endregion
 
             data.Add(jurys);        //<
@@ -305,7 +315,7 @@ namespace ResultViewerWPF
                     if (inpStr != null)
                         return inpStr;
                     else
-                        throw new Exception("Ошибка во время чтения файла. Возможно файл повреждён");
+                        throw new FormatException("Ошибка во время чтения файла. Возможно файл повреждён");
                 };
 
                 // Локальная функция для получения целыых чисел
@@ -318,7 +328,7 @@ namespace ResultViewerWPF
                     if (int.TryParse(inpStr, out inpInt))
                         return inpInt;
                     else
-                        throw new Exception("Ошибка во время чтения файла. Возможно файл повреждён");
+                        throw new FormatException("Ошибка во время чтения файла. Возможно файл повреждён");
                 };
 
                 // /\ /\ /\ /\ /\
@@ -428,6 +438,9 @@ namespace ResultViewerWPF
                 Dictionary<string, Tuple<List<double>, List<double>>> juryChoice = appLogic.GetJuryChoice();
                 List<string> memberList = appLogic.GetMembersList();
 
+                // Заранее объявим элемент, в котором будет временно храниться считываемый нод, чтобы можно было вычислить, где произошла ошибка
+                XmlNode tempElement = null;
+
                 try         //Попытка загрузить данные
                 {
                     XmlDocument xdoc = new XmlDocument();      //Загружаем файл xml
@@ -471,7 +484,7 @@ namespace ResultViewerWPF
                     #region Get OldSettings
 
                     XmlNode oldSettings = xRoot.SelectSingleNode("Old_Settings");
-                    XmlNode tempElement = null;
+                    
                     int tempIntVar;
                     double tempDoubleVar;
                     byte tempByteVar;
@@ -482,7 +495,7 @@ namespace ResultViewerWPF
                         if (int.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempIntVar))
                             return tempIntVar;
                         else
-                            throw new Exception("Не получилось сконвертировать данный элемент в тип int");
+                            throw new FormatException("Не получилось сконвертировать данный элемент в тип int");
                     };
 
                     Func<string, string> getStr = (name) =>
@@ -495,7 +508,7 @@ namespace ResultViewerWPF
                         if (double.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempDoubleVar))
                             return tempDoubleVar;
                         else
-                            throw new Exception("Не получилось сконвертировать данный элемент в тип double");
+                            throw new FormatException("Не получилось сконвертировать данный элемент в тип double");
                     };
 
                     Func<string, byte> getByte = (name) =>
@@ -503,7 +516,7 @@ namespace ResultViewerWPF
                         if (byte.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempByteVar))
                             return tempByteVar;
                         else
-                            throw new Exception("Не получилось сконвертировать данный элемент в тип byte");
+                            throw new FormatException("Не получилось сконвертировать данный элемент в тип byte");
                     };
 
                     Func<string, bool> getBool = (name) =>
@@ -511,7 +524,7 @@ namespace ResultViewerWPF
                         if (bool.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempBoolVar))
                             return tempBoolVar;
                         else
-                            throw new Exception("Не получилось сконвертировать данный элемент в тип bool");
+                            throw new FormatException("Не получилось сконвертировать данный элемент в тип bool");
                     };
 
                     tempElement = oldSettings.SelectSingleNode("ContBarColor");
@@ -792,11 +805,33 @@ namespace ResultViewerWPF
 
                     tempElement = settings.SelectSingleNode("BackgroundAppearTime");
                     ProgramSettings.BackgroundAppearTime = TimeSpan.FromMilliseconds(getDouble("Value"));
+
+                    tempElement = settings.SelectSingleNode("LowerPhraseFontWeight");
+                    ProgramSettings.LowerPhraseFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+
+                    tempElement = settings.SelectSingleNode("LowerPhraseFontColor");
+                    ProgramSettings.LowerPhraseFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+
+                    tempElement = settings.SelectSingleNode("LowerPhraseOffset");
+                    ProgramSettings.LowerPhraseOffset = getDouble("Value");
+
+                    tempElement = settings.SelectSingleNode("LowerPhraseFontSize");
+                    ProgramSettings.LowerPhraseFontSize = getDouble("Value");
+
+                    tempElement = settings.SelectSingleNode("LowerPhraseShowMode");
+                    ProgramSettings.LowerPhraseShowMode = (ProgramSettings.ShowMode)getInt("Value");
+
+                    tempElement = settings.SelectSingleNode("LowerPhrase");
+                    ProgramSettings.LowerPhrase = getStr("Value");
                     #endregion
+                }
+                catch (FormatException fx)
+                {
+                    throw new FormatException($"Ошибка во время преобразования типов в элементе: {tempElement.InnerText}\n\nException data: {fx.Data}\nStackTrace: {fx.StackTrace}");
                 }
                 catch (Exception x)
                 {
-                    throw new Exception("Ошибка во время чтения файла");
+                    throw new Exception($"Неожиданная ошибка во время чтения файла\n\nСчитываемый элемент: {tempElement.InnerText}\nException data: {x.Data}\nStackTrace: {x.StackTrace}");
                 }
             }
         }

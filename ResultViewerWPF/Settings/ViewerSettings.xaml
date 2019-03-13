@@ -10,8 +10,8 @@
         <Button x:Name="ToggleSettingsButton" Canvas.Top="5" Canvas.Left="5" Width="80" Content="Открыть" Click="ToggleSettingsMenu" Panel.ZIndex="10001"/>
         <Button x:Name="ApplySettingsButton" Canvas.Left="5" Width="80" Content="Обновить" Canvas.Top="35" Panel.ZIndex="10002" Click="ApplySettingsButton_Click"/>
         <ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="{Binding ElementName=MainCanvas, Path=ActualHeight}" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">
-        <!--<ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="5000" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">-->
-        <StackPanel Width="200" Margin="5" FlowDirection="LeftToRight">
+            <!--<ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="5000" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">-->
+            <StackPanel Width="200" Margin="5" FlowDirection="LeftToRight">
                 <GroupBox Header="Сброс" Margin="5">
                     <StackPanel Margin="5">
                         <Button Content="Сбросить настройки" ToolTip="Сбросить настройки до стандартных значений" Click="SetDefaultSettings"/>
@@ -47,7 +47,7 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Главный цвет фона панели участника. С таким цветом палели будут загружены изначально" Margin="0, 0, 0, -8"/>
+                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет шрифта для нижней фразы" Margin="0, 0, 0, -8"/>
                             <Canvas x:Name="ShowMemberPanelColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
                             <Button x:Name="ChangeMemberPanelColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangeMemberPanelColor_Click"/>
                         </Grid>
@@ -447,7 +447,58 @@
                         </GroupBox>
 
                         <GroupBox Header="Пояснения">
-                            
+                            <GroupBox Header="Нижняя фраза">
+                                <StackPanel Orientation="Vertical">
+                                    <Label Content="Отступ" ToolTip="Расстояние между нижней частью экрана и панелью с поясняющей фразой"/>
+                                    <TextBox x:Name="LowerPhraseOffsetTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeLowerPhraseOffset"/>
+                                    <Label Content="Размер шрифта" ToolTip="Размер шрифта для панели с поясняющей фразой"/>
+                                    <TextBox x:Name="LowerPhraseFontHeightTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeLowerPhraseFontHeight"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет заднего фона для панели с предварительными результатами" Margin="0, 0, 0, -8"/>
+                                        <Canvas x:Name="ShowLowerPanelFontColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
+                                        <Button x:Name="ChangeLowerPanelFontColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangeLowerPanelFontColor_Click"/>
+                                    </Grid>
+
+                                    <Label Content="Тип шрифта" ToolTip="Тип шрифта для нижней фразы"/>
+                                    <ComboBox x:Name="ChooseLowerPhraseFontWeight" SelectionChanged="ChooseLowerPhraseFontWeight_SelectionChanged">
+                                        <ComboBoxItem Content="Black"/>
+                                        <ComboBoxItem Content="Bold"/>
+                                        <ComboBoxItem Content="DemiBold"/>
+                                        <ComboBoxItem Content="ExtraBlack"/>
+                                        <ComboBoxItem Content="ExtraBold"/>
+                                        <ComboBoxItem Content="ExtraLight"/>
+                                        <ComboBoxItem Content="Heavy"/>
+                                        <ComboBoxItem Content="Light"/>
+                                        <ComboBoxItem Content="Medium"/>
+                                        <ComboBoxItem Content="Normal"/>
+                                        <ComboBoxItem Content="Regular"/>
+                                        <ComboBoxItem Content="SemiBold"/>
+                                        <ComboBoxItem Content="Thin"/>
+                                        <ComboBoxItem Content="UltraBlack"/>
+                                        <ComboBoxItem Content="UltraBold"/>
+                                        <ComboBoxItem Content="UltraLight"/>
+                                    </ComboBox>
+
+                                    <Label Content="Режим отображения" ToolTip="Режим отображения поясняющей фразы"/>
+                                    <ComboBox x:Name="ChooseLowerPhraseShowMode" SelectionChanged="ChooseLowerPhraseShowMode_SelectionChanged">
+                                        <ComboBoxItem Content="Всегда отображать" ToolTip="Отображается на протяжении всего показа, проявляется после первой расстановки объектов"/>
+                                        <ComboBoxItem Content="При наличии Х/Н" ToolTip="Отображается только при наличии участников со значениями баллов X или Н"/>
+                                        <ComboBoxItem Content="Никогда" ToolTip="Отображение нижней фразы выключено"/>
+                                    </ComboBox>
+                                    
+                                    <Label Content="Поясняющая фраза" ToolTip="Поясняющая фраза"/>
+                                    <RichTextBox x:Name="LowerPhraseTB" MaxHeight="100" Height="100" LostFocus="ChangeLowerPhrase"/>
+                                </StackPanel>
+                            </GroupBox>
                         </GroupBox>
                         
                         <GroupBox Header="Расстановка объектов">

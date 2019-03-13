@@ -209,7 +209,7 @@ namespace ResultViewerWPF.Viewer
             mainRectangle = new Rectangle()
             {
                 // Ширина
-                Width = ProgramSettings.MemberPanelWidth,
+                Width = ProgramSettings.MemberPanelWidth + ProgramSettings.MemberPointsPanelWidth,
                 // Высота
                 Height = ProgramSettings.MemberPanelHeight,
                 // Цвет фона панели
@@ -280,7 +280,7 @@ namespace ResultViewerWPF.Viewer
             mainPanel.Children.Add(mainRectangle);                                                                         // Фон
             mainPanel.Children.Add(memberName);                                                                            // Имя участника
             Canvas.SetTop(memberName, ProgramSettings.MemberPanelHeight / 2 - ProgramSettings.MemberNameFontSize / 2);
-            Canvas.SetLeft(memberName, ProgramSettings.MemberPanelHeight + 10);                                                // Отодвигаем имя участника
+            Canvas.SetLeft(memberName, ProgramSettings.MemberPointsPanelWidth + 10);                                                // Отодвигаем имя участника
             pointsPanel.Children.Add(pointsStroke);                                                                             // Контур баллов
             pointsPanel.Children.Add(memberPoints);                                                                             // Количество баллов
             mainPanel.Children.Add(pointsPanel);                                                                           // Панель с баллами
@@ -536,7 +536,7 @@ namespace ResultViewerWPF.Viewer
             // Обнуляем место в топе
             Place = 0;
 
-            // ОБновляем результат
+            // Обновляем результат
             Value = _value;
         }
 

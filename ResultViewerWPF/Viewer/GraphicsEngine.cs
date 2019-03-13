@@ -424,23 +424,35 @@ namespace ResultViewerWPF.Viewer
 
 
         /// <summary>
-        /// Делает панель видимой
+        /// Делает панель MemberBar видимой
         /// </summary>
-        /// <param name="memberBar">Панель, которую необходимо проявить</param>
+        /// <param name="memberBar">Панель типа MemberBar, которую необходимо проявить</param>
         /// <param name="afterComplited">Следующее действие, которое будет выполнено только по завершении работы данной анимамции</param>
         public static void Appear(MemberBar memberBar, EventHandler afterCompleted = null) => barAppear(memberBar, ProgramSettings.MemberPanelOpacity, afterCompleted);
 
         /// <summary>
-        /// Делает панель видимой
+        /// Делает панель JuryBar видимой
         /// </summary>
-        /// <param name="juryBar">Панель, которую необходимо проявить</param>
+        /// <param name="juryBar">Панель типа JuryBar, которую необходимо проявить</param>
         /// <param name="afterComplited">Следующее действие, которое будет выполнено только по завершении работы данной анимамции</param>
         public static void Appear(JuryBar juryBar, EventHandler afterCompleted = null) => barAppear(juryBar, ProgramSettings.JuryPanelOpacity, afterCompleted);
 
         /// <summary>
+        /// Делает панель TextBar видимой
+        /// </summary>
+        /// <param name="textBar"></param>
+        /// <param name="textBar">Панель типа TextBar, которую необходимо проявить</param>
+        /// <param name="afterComplited">Следующее действие, которое будет выполнено только по завершении работы данной анимамции</param>
+        public static void Appear(TextBar textBar, EventHandler afterCompleted = null)
+        {
+            barAppear(textBar, 1, afterCompleted);
+            textBar.IsVisible = true;
+        } 
+
+        /// <summary>
         /// Делает панель видимой
         /// </summary>
-        /// <param name="pointBar">Панель, которую необходимо проявить</param>
+        /// <param name="pointBar">Панель типа PointBar, которую необходимо проявить</param>
         /// <param name="afterComplited">Следующее действие, которое будет выполнено только по завершении работы данной анимамции</param>
         public static void Appear(PointBar pointBar, EventHandler afterCompleted = null) => barAppear(pointBar, ProgramSettings.PointBarPanelOpacity, afterCompleted);
         

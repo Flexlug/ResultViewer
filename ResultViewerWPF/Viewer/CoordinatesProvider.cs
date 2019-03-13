@@ -118,10 +118,9 @@ namespace ResultViewerWPF.Viewer
                                  (int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset - ProgramSettings.MemberPanelHeight / 2 + ProgramSettings.MemberInterval + (ProgramSettings.MemberPanelHeight + (ProgramSettings.MemberInterval + 1.4)) * PlaceInd));
         }
 
-        public Point LowerFrase()
+        public Point LowerFrase(double actualWidth, double actualHeight)
         {
-            return new Point((width / 2) - (ProgramSettings.LowerPhraseWidth / 2),
-                             height - ProgramSettings.LowerPhraseWidth / 2);
+            return new Point(width / 2 - actualWidth / 2, height / 2 + actualHeight / 2 + ProgramSettings.LowerPhraseOffset);
         }
     }
 }

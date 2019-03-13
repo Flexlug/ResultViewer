@@ -499,27 +499,62 @@ namespace ResultViewerWPF.Viewer
         /// <summary>
         /// Финальная фраза, отображаемая в коцне показа
         /// </summary>
-        public static string FinalPhrase = "Поздравляем победителей!"; 
+        public static string FinalPhrase = "Поздравляем победителей!";
+
+        #endregion
+
+        #region Нижняя фраза
+
+        /// <summary>
+        /// Тип шрифта для нижней фразы
+        /// </summary>
+        public static FontWeight LowerPhraseFontWeight = FontWeights.Normal;
+
+        /// <summary>
+        /// Цвет шрифта нижне фразы
+        /// </summary>
+        public static Color LowerPhraseFontColor = Colors.Black;
 
         /// <summary>
         /// Расстояние между нижним краем экрана и нижним уведомлением
         /// </summary>
-        public static double LowerPhraseOffset = 100; // TODO
-
-        /// <summary>
-        /// Ширина панели нижнего уведомления
-        /// </summary>
-        public static double LowerPhraseWidth = 200; // TODO
+        public static double LowerPhraseOffset = 300; // TODO
 
         /// <summary>
         /// Размер шрифта для нижней фразы
         /// </summary>
-        public static double LowerPhraseFontHeight = 10; // TODO
+        public static double LowerPhraseFontSize = 30; // TODO
+
+        /// <summary>
+        /// Режим отображения нижней фразы
+        /// </summary>
+        public enum ShowMode
+        {
+            /// <summary>
+            /// Отображать всегда
+            /// </summary>
+            AlwaysVisible,
+
+            /// <summary>
+            /// Отображать только при наличии участников со значениями баллов X/Н
+            /// </summary>
+            OnlyXN,
+
+            /// <summary>
+            /// ОТображение нижней фразы выключено
+            /// </summary>
+            Never
+        }
+
+        /// <summary>
+        /// Режим отображения нижней фразы
+        /// </summary>
+        public static ShowMode LowerPhraseShowMode = ShowMode.AlwaysVisible;
 
         /// <summary>
         /// Текст нижнего уведомления
         /// </summary>
-        public static string LowerFrase = "Н - не явившиеся на конкурс X - не приславшие конкурсную работу"; // TODO
+        public static string LowerPhrase = "Н - не явившиеся на конкурс \nX - не приславшие конкурсную работу"; // TODO
 
         #endregion
 

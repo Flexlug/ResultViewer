@@ -242,7 +242,7 @@ namespace ResultViewerWPF
                     // Во время сохранения что-то пошло наперекосяк...
                     UpdateStatus("Critical error!");
 
-                    MessageBox.Show($"Неожиданное исключение: {ex.Message}\nSource:{ex.Source}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Неожиданное исключение: {ex.Message}\nSource:{ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -359,7 +359,7 @@ namespace ResultViewerWPF
                 {
                     // Выводим сообщение об ошибке
                     UpdateStatus("Critical error!");
-                    MessageBox.Show($"Неожиданное исключение:\nMessage: {exc.Message}\nSource: {exc.Source}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Неожиданное исключение:\nMessage: {exc.Message}\nSource: {exc.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     // Возвращаем дефолтный FilePath
                     DataIO.RestoreDefaultPath();
@@ -369,7 +369,7 @@ namespace ResultViewerWPF
             catch (Exception ex)
             {
                 UpdateStatus("Critical error!");
-                MessageBox.Show($"Неожиданное исключение:\nMessage: {ex.Message}\nSource: {ex.Source}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Неожиданное исключение:\nMessage: {ex.Message}\nSource: {ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

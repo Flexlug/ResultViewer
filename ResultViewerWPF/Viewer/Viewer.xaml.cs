@@ -91,6 +91,11 @@ namespace ResultViewerWPF.Viewer
         PointBar pointBar;
 
         /// <summary>
+        /// Панель с поясняющей фразой
+        /// </summary>
+        TextBar lowerPhrase;
+
+        /// <summary>
         /// Инициализирует визуализатор результатов конкурса
         /// </summary>
         /// <param name="logic">Логика приложения со всеми необходимыми данными</param>
@@ -209,6 +214,9 @@ namespace ResultViewerWPF.Viewer
                         for (int i = 0; i < memberNames.Length; i++)
                             memberPanels.Add(new MemberBar(mainCanvas, memberNames[i], i));
 
+                        // Загрузим поясняющую фразу
+                        lowerPhrase = new TextBar(mainCanvas, ProgramSettings.LowerPhrase);
+
                         // Грузим дополнительные данные участников, если показ таковых включен
                         if (ProgramSettings.ShowMemberResultMode == ProgramSettings.ResultShowMode.Visible ||
                             ProgramSettings.ShowMemberResultMode == ProgramSettings.ResultShowMode.AlwaysVisible)
@@ -248,7 +256,14 @@ namespace ResultViewerWPF.Viewer
                         });
 
                         // Переместим его с центра экрана
-                        GraphicsEngine.MoveTo(juryPanels[currentJury], coordinates.Jury());
+                        GraphicsEngine.MoveTo(juryPanels[currentJury], coordinates.Jury(), (obj1, jbj2) =>
+                        {
+                            // К тому моменту уже должна быть известна истинная ширина и высота textBar-а, с-но пробуем его переместить
+                            GraphicsEngine.MoveToInstant(lowerPhrase, coordinates.LowerFrase(lowerPhrase.GetPanelWidth(), lowerPhrase.GetPanelHeight()));
+                            // Если фраза должна всегда отображаться, то включим её отображение прямо сейчас
+                            if (ProgramSettings.LowerPhraseShowMode == ProgramSettings.ShowMode.AlwaysVisible)
+                                GraphicsEngine.Appear(lowerPhrase);
+                        });
 
                         // Отсортируем участников по алфавиту
                         SortMembers();
@@ -455,6 +470,10 @@ namespace ResultViewerWPF.Viewer
                                 for (int mem = 0; mem < memberPanels.Count; mem++)
                                     memberPanels[mem].ShowMask = false;
 
+                                // Убираем поясняюую фразу, если надо
+                                if (lowerPhrase.IsVisible)
+                                    GraphicsEngine.Disappear(lowerPhrase);
+
                                 // Завершаем показ, включаем "заглушку"
                                 currentState = ShowState.FinalScreen;
                             }
@@ -514,18 +533,36 @@ namespace ResultViewerWPF.Viewer
                                                 .ToList();
             }
 
-            // Отсортируем тех, кто отсутствовал или получил нулевой балл
+            // Отсортируем тех, кто отсутствовал или не получил
             List<MemberBar> absentMembers = null;
             absentMembers = memberPanels.Select(x => x)
                 .Where(x => x.ShowMask == true)
                 .OrderBy(x => x.MemberMaskType)
                 .ToList();
 
-            // Отсортируем тех, у кого нет баллов
+            // Отсортируем тех, у кого ноль баллов
             List<MemberBar> membersWithoutPoints = memberPanels.Select(x => x)
                                        .Where(x => x.Points == 0 && !x.ShowMask)
                                        .OrderBy(x => x.Name)
                                        .ToList();
+
+            if (ProgramSettings.LowerPhraseShowMode == ProgramSettings.ShowMode.OnlyXN)
+            {
+                // Если есть участники, у которых нет баллов, то покажем поясняющую фразу
+                if (absentMembers.Count != 0)
+                {
+                    if (!lowerPhrase.IsVisible)
+                        GraphicsEngine.Appear(lowerPhrase);
+                }
+                else
+                {
+                    if (lowerPhrase.IsVisible)
+                    {
+                        GraphicsEngine.Disappear(lowerPhrase);
+                        lowerPhrase.IsVisible = false;
+                    }
+                }
+            }
 
             // Соединим два этих списка
             membersWithPoints.InsertRange(membersWithPoints.Count, membersWithoutPoints);
@@ -737,6 +774,7 @@ namespace ResultViewerWPF.Viewer
             pointBar = new PointBar(mainCanvas);
             coordinates = new CoordinatesProvider((int)Width, (int)Height, pointBar, ProgramSettings.MaxMembersInColumn);
 
+            // Проверяем необходимость использования режима в две колонки
             if (appLogic.GetMemberNames().Length > ProgramSettings.MaxMembersInColumn)
             {
                 if (ProgramSettings.TwoColumns)
