@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using System.Drawing;
 using ResultViewerWPF.Viewer;
 using System.Windows;
+using System.Text;
 
 namespace ResultViewerWPF
 {
@@ -284,7 +285,9 @@ namespace ResultViewerWPF
             data.Add(oldSettings);  // Собираем файл xml
             data.Add(settings);     //<
             xdoc.Add(data);         //<
-            xdoc.Save(new StreamWriter(FilePath));  //Сохранение файла
+            StreamWriter writingFile = new StreamWriter(FilePath);
+            xdoc.Save(writingFile);  //Сохранение файла
+            writingFile.Dispose();
         }
 
         /// <summary>
@@ -527,68 +530,85 @@ namespace ResultViewerWPF
                             throw new FormatException("Не получилось сконвертировать данный элемент в тип bool");
                     };
 
-                    tempElement = oldSettings.SelectSingleNode("ContBarColor");
-                    ProgramSettings.OldSettings.ContBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
+                    StringBuilder errorList = new StringBuilder();
 
-                    tempElement = oldSettings.SelectSingleNode("sndContBarColor");
-                    ProgramSettings.OldSettings.sndContBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
+                    Func<XmlNode, string, bool> tryGetSingleNode = (parentNode, nodeName) =>
+                    {
+                        try
+                        {
+                            tempElement = parentNode.SelectSingleNode(nodeName) ?? throw new NullReferenceException();                            
+                            return true;
+                        }
+                        catch (Exception exc)
+                        {
+                            errorList.Append($"{nodeName}\n");
+                            return false;
+                        }
+                    };
 
-                    tempElement = oldSettings.SelectSingleNode("ContBarFontSize");
-                    ProgramSettings.OldSettings.ContBarFontSize = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("ContBarWidth");
-                    ProgramSettings.OldSettings.ContBarWidth = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "ContBarColor"))
+                        ProgramSettings.OldSettings.ContBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
 
-                    tempElement = oldSettings.SelectSingleNode("ContBarHeight");
-                    ProgramSettings.OldSettings.ContBarHeight = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "sndContBarColor"))
+                        ProgramSettings.OldSettings.sndContBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
 
-                    tempElement = oldSettings.SelectSingleNode("XNum");
-                    ProgramSettings.OldSettings.XNum = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "ContBarFontSize"))
+                        ProgramSettings.OldSettings.ContBarFontSize = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("YNum");
-                    ProgramSettings.OldSettings.YNum = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "ContBarWidth"))
+                        ProgramSettings.OldSettings.ContBarWidth = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("FrameRate");
-                    ProgramSettings.OldSettings.FrameRate = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "ContBarHeight"))
+                        ProgramSettings.OldSettings.ContBarHeight = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("FrameInterval");
-                    ProgramSettings.OldSettings.FrameInterval = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "XNum"))
+                        ProgramSettings.OldSettings.XNum = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("QuitFrase");
-                    ProgramSettings.OldSettings.QuitFrase = getStr("Value");
+                    if (tryGetSingleNode(oldSettings, "YNum"))
+                        ProgramSettings.OldSettings.YNum = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("PointBarColor");
-                    ProgramSettings.OldSettings.PointBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
+                    if (tryGetSingleNode(oldSettings, "FrameRate"))
+                        ProgramSettings.OldSettings.FrameRate = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("sndPointBarColor");
-                    ProgramSettings.OldSettings.sndPointBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
+                    if (tryGetSingleNode(oldSettings, "FrameInterval"))
+                        ProgramSettings.OldSettings.FrameInterval = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("pointBarWidth");
-                    ProgramSettings.OldSettings.pointBarWidth = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "QuitFrase"))
+                        ProgramSettings.OldSettings.QuitFrase = getStr("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("pointBarHeight");
-                    ProgramSettings.OldSettings.pointBarHeight = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "PointBarColor"))
+                        ProgramSettings.OldSettings.PointBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
 
-                    tempElement = oldSettings.SelectSingleNode("pointBarInterval");
-                    ProgramSettings.OldSettings.pointBarInterval = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "sndPointBarColor"))
+                        ProgramSettings.OldSettings.sndPointBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
 
-                    tempElement = oldSettings.SelectSingleNode("pointBarFontSize");
-                    ProgramSettings.OldSettings.pointBarFontSize = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "pointBarWidth"))
+                        ProgramSettings.OldSettings.pointBarWidth = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("JuryBarColor");
-                    ProgramSettings.OldSettings.JuryBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
+                    if (tryGetSingleNode(oldSettings, "pointBarHeight"))
+                        ProgramSettings.OldSettings.pointBarHeight = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("sndJuryBarColor");
-                    ProgramSettings.OldSettings.sndJuryBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
+                    if (tryGetSingleNode(oldSettings, "pointBarInterval"))
+                        ProgramSettings.OldSettings.pointBarInterval = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("JuryBarWidth");
-                    ProgramSettings.OldSettings.JuryBarWidth = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "pointBarFontSize"))
+                        ProgramSettings.OldSettings.pointBarFontSize = getInt("Value");
 
-                    tempElement = oldSettings.SelectSingleNode("JuryBarHeight");
-                    ProgramSettings.OldSettings.JuryBarHeight = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "JuryBarColor"))
+                        ProgramSettings.OldSettings.JuryBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
 
-                    tempElement = oldSettings.SelectSingleNode("JuryBarFontSize");
-                    ProgramSettings.OldSettings.JuryBarFontSize = getInt("Value");
+                    if (tryGetSingleNode(oldSettings, "sndJuryBarColor"))
+                        ProgramSettings.OldSettings.sndJuryBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
+
+                    if (tryGetSingleNode(oldSettings, "JuryBarWidth"))
+                        ProgramSettings.OldSettings.JuryBarWidth = getInt("Value");
+
+                    if (tryGetSingleNode(oldSettings, "JuryBarHeight"))
+                        ProgramSettings.OldSettings.JuryBarHeight = getInt("Value");
+
+                    if (tryGetSingleNode(oldSettings, "JuryBarFontSize"))
+                        ProgramSettings.OldSettings.JuryBarFontSize = getInt("Value");
 
                     #endregion
 
@@ -596,234 +616,237 @@ namespace ResultViewerWPF
 
                     XmlNode settings = xRoot.SelectSingleNode("Settings");
 
-                    tempElement = settings.SelectSingleNode("MemberPanelWidth");
-                    ProgramSettings.MemberPanelWidth = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPanelWidth"))
+                        ProgramSettings.MemberPanelWidth = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPanelHeight");
-                    ProgramSettings.MemberPanelHeight = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPanelHeight"))
+                        ProgramSettings.MemberPanelHeight = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberNameFontSize");
-                    ProgramSettings.MemberNameFontSize = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberNameFontSize"))
+                        ProgramSettings.MemberNameFontSize = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPanelOpacity");
-                    ProgramSettings.MemberPanelOpacity = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPanelOpacity"))
+                        ProgramSettings.MemberPanelOpacity = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPanelColor");
-                    ProgramSettings.MemberPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPanelColor"))
+                        ProgramSettings.MemberPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPanelChosenColor");
-                    ProgramSettings.MemberPanelChosenColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPanelChosenColor"))
+                        ProgramSettings.MemberPanelChosenColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPanelChosenColor2");
-                    ProgramSettings.MemberPanelChosenColor2 = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPanelChosenColor2"))
+                        ProgramSettings.MemberPanelChosenColor2 = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPanelHighlightLeaders");
-                    ProgramSettings.MemberPanelHighlightLeaders = getBool("Value");
+                    if (tryGetSingleNode(settings, "MemberPanelHighlightLeaders"))
+                        ProgramSettings.MemberPanelHighlightLeaders = getBool("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPanelFirstPlace");
-                    ProgramSettings.MemberPanelFirstPlace = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPanelFirstPlace"))
+                        ProgramSettings.MemberPanelFirstPlace = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPanelSecondPlace");
-                    ProgramSettings.MemberPanelSecondPlace = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPanelSecondPlace"))
+                        ProgramSettings.MemberPanelSecondPlace = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPanelSecondPlace");
-                    ProgramSettings.MemberPanelSecondPlace = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPanelSecondPlace"))
+                        ProgramSettings.MemberPanelSecondPlace = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPanelOtherPlaces");
-                    ProgramSettings.MemberPanelOtherPlaces = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPanelOtherPlaces"))
+                        ProgramSettings.MemberPanelOtherPlaces = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPanelUseSecondChooseColor");
-                    ProgramSettings.MemberPanelUseSecondChooseColor = getBool("Value");
+                    if (tryGetSingleNode(settings, "MemberPanelUseSecondChooseColor"))
+                        ProgramSettings.MemberPanelUseSecondChooseColor = getBool("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberNameFontWeight");
-                    ProgramSettings.MemberNameFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
-                    
-                    tempElement = settings.SelectSingleNode("MemberNameFontColor");
-                    ProgramSettings.MemberNameFontColor = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"))));
+                    if (tryGetSingleNode(settings, "MemberNameFontWeight"))
+                        ProgramSettings.MemberNameFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
 
-                    tempElement = settings.SelectSingleNode("MemberPointsFontWeight");
-                    ProgramSettings.MemberPointsFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+                    if (tryGetSingleNode(settings, "MemberNameFontColor"))
+                        ProgramSettings.MemberNameFontColor = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"))));
 
-                    tempElement = settings.SelectSingleNode("MemberPointsFontSize");
-                    ProgramSettings.MemberPointsFontSize = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPointsFontWeight"))
+                        ProgramSettings.MemberPointsFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
 
-                    tempElement = settings.SelectSingleNode("MemberPointsPanelHeight");
-                    ProgramSettings.MemberPointsPanelHeight = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPointsFontSize"))
+                        ProgramSettings.MemberPointsFontSize = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPointsPanelWidth");
-                    ProgramSettings.MemberPointsPanelWidth = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPointsPanelHeight"))
+                        ProgramSettings.MemberPointsPanelHeight = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPointsPanelColor");
-                    ProgramSettings.MemberPointsPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPointsPanelWidth"))
+                        ProgramSettings.MemberPointsPanelWidth = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPointsStrokeColor");
-                    ProgramSettings.MemberPointsStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPointsPanelColor"))
+                        ProgramSettings.MemberPointsPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPointsFontColor");
-                    ProgramSettings.MemberPointsFontColor = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"))));
+                    if (tryGetSingleNode(settings, "MemberPointsStrokeColor"))
+                        ProgramSettings.MemberPointsStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPointsStrokeWidth");
-                    ProgramSettings.MemberPointsStrokeWidth = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPointsFontColor"))
+                        ProgramSettings.MemberPointsFontColor = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"))));
 
-                    tempElement = settings.SelectSingleNode("MemberPlaceFontColor");
-                    ProgramSettings.MemberPlaceFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPointsStrokeWidth"))
+                        ProgramSettings.MemberPointsStrokeWidth = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPlaceFontSize");
-                    ProgramSettings.MemberPlaceFontSize = getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberPlaceFontColor"))
+                        ProgramSettings.MemberPlaceFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberPlaceFontWeight");
-                    ProgramSettings.MemberPlaceFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+                    if (tryGetSingleNode(settings, "MemberPlaceFontSize"))
+                        ProgramSettings.MemberPlaceFontSize = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPlaceShowMode");
-                    ProgramSettings.MemberPlaceShowMode = (ProgramSettings.PlaceShowMode)getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberPlaceFontWeight"))
+                        ProgramSettings.MemberPlaceFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
 
-                    tempElement = settings.SelectSingleNode("MemberPlaceStrokeWidth");
-                    ProgramSettings.MemberPlaceStrokeWidth = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberPlaceShowMode"))
+                        ProgramSettings.MemberPlaceShowMode = (ProgramSettings.PlaceShowMode)getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPlacePanelColor");
-                    ProgramSettings.MemberPlacePanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPlaceStrokeWidth"))
+                        ProgramSettings.MemberPlaceStrokeWidth = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPlaceStrokeColor");
-                    ProgramSettings.MemberPlaceStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberPlacePanelColor"))
+                        ProgramSettings.MemberPlacePanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("ShowMemberResultMode");
-                    ProgramSettings.ShowMemberResultMode = (ProgramSettings.ResultShowMode)getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberPlaceStrokeColor"))
+                        ProgramSettings.MemberPlaceStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberResultPanelWidth");
-                    ProgramSettings.MemberResultPanelWidth = getDouble("Value");
+                    if (tryGetSingleNode(settings, "ShowMemberResultMode"))
+                        ProgramSettings.ShowMemberResultMode = (ProgramSettings.ResultShowMode)getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberResultPanelHeight");
-                    ProgramSettings.MemberResultPanelHeight = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberResultPanelWidth"))
+                        ProgramSettings.MemberResultPanelWidth = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberResultFontSize");
-                    ProgramSettings.MemberResultFontSize = getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberResultPanelHeight"))
+                        ProgramSettings.MemberResultPanelHeight = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberResultPanelOffset");
-                    ProgramSettings.MemberResultPanelOffset = getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberResultFontSize"))
+                        ProgramSettings.MemberResultFontSize = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberResultStrokeWidth");
-                    ProgramSettings.MemberResultStrokeWidth = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberResultPanelOffset"))
+                        ProgramSettings.MemberResultPanelOffset = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberResultFontWeight");
-                    ProgramSettings.MemberResultFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+                    if (tryGetSingleNode(settings, "MemberResultStrokeWidth"))
+                        ProgramSettings.MemberResultStrokeWidth = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberResultFontColor");
-                    ProgramSettings.MemberResultFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberResultFontWeight"))
+                        ProgramSettings.MemberResultFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
 
-                    tempElement = settings.SelectSingleNode("MemberResultPanelColor");
-                    ProgramSettings.MemberResultPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberResultFontColor"))
+                        ProgramSettings.MemberResultFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("MemberResultStrokeColor");
-                    ProgramSettings.MemberResultStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "MemberResultPanelColor"))
+                        ProgramSettings.MemberResultPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("JuryPanelWidth");
-                    ProgramSettings.JuryPanelWidth = getDouble("Value");
+                    if (tryGetSingleNode(settings, "MemberResultStrokeColor"))
+                        ProgramSettings.MemberResultStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("JuryPanelHeight");
-                    ProgramSettings.JuryPanelHeight = getDouble("Value");
+                    if (tryGetSingleNode(settings, "JuryPanelWidth"))
+                        ProgramSettings.JuryPanelWidth = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("JuryPanelOpacity");
-                    ProgramSettings.JuryPanelOpacity = getDouble("Value");
+                    if (tryGetSingleNode(settings, "JuryPanelHeight"))
+                        ProgramSettings.JuryPanelHeight = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("JuryFontSize");
-                    ProgramSettings.JuryFontSize = getDouble("Value");
-                    
-                    tempElement = settings.SelectSingleNode("JuryPanelColor");
-                    ProgramSettings.JuryPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "JuryPanelOpacity"))
+                        ProgramSettings.JuryPanelOpacity = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("PointBarFontSize");
-                    ProgramSettings.PointBarFontSize = getDouble("Value");
+                    if (tryGetSingleNode(settings, "JuryFontSize"))
+                        ProgramSettings.JuryFontSize = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("PointBarPanelOpacity");
-                    ProgramSettings.PointBarPanelOpacity = getDouble("Value");
+                    if (tryGetSingleNode(settings, "JuryPanelColor"))
+                        ProgramSettings.JuryPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("TopJuryInterval");
-                    ProgramSettings.TopJuryInterval = getInt("Value");
+                    if (tryGetSingleNode(settings, "PointBarFontSize"))
+                        ProgramSettings.PointBarFontSize = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("JuryMemberOffset");
-                    ProgramSettings.JuryMemberOffset = getInt("Value");
+                    if (tryGetSingleNode(settings, "PointBarPanelOpacity"))
+                        ProgramSettings.PointBarPanelOpacity = getDouble("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberInterval");
-                    ProgramSettings.MemberInterval = getInt("Value");
+                    if (tryGetSingleNode(settings, "TopJuryInterval"))
+                        ProgramSettings.TopJuryInterval = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberColumnInterval");
-                    ProgramSettings.MemberColumnInterval = getInt("Value");
+                    if (tryGetSingleNode(settings, "JuryMemberOffset"))
+                        ProgramSettings.JuryMemberOffset = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberPointsMode");
-                    ProgramSettings.MemberPointsMode = (ProgramSettings.PointsMode)getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberInterval"))
+                        ProgramSettings.MemberInterval = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("MemberSortingMode");
-                    ProgramSettings.MemberSortingMode = (ProgramSettings.SortingMode)getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberColumnInterval"))
+                        ProgramSettings.MemberColumnInterval = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("TrueTopRating");
-                    ProgramSettings.TrueTopRating = getBool("Value");
+                    if (tryGetSingleNode(settings, "MemberPointsMode"))
+                        ProgramSettings.MemberPointsMode = (ProgramSettings.PointsMode)getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("StartJury");
-                    ProgramSettings.StartJury = getInt("Value");
+                    if (tryGetSingleNode(settings, "MemberSortingMode"))
+                        ProgramSettings.MemberSortingMode = (ProgramSettings.SortingMode)getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("TwoColumns");
-                    ProgramSettings.TwoColumns = getBool("Value");
+                    if (tryGetSingleNode(settings, "TrueTopRating"))
+                        ProgramSettings.TrueTopRating = getBool("Value");
 
-                    tempElement = settings.SelectSingleNode("MaxMembersInColumn");
-                    ProgramSettings.MaxMembersInColumn = getInt("Value");
+                    if (tryGetSingleNode(settings, "StartJury"))
+                        ProgramSettings.StartJury = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("FinalPhrase");
-                    ProgramSettings.FinalPhrase = getStr("Value");
-                    
-                    tempElement = settings.SelectSingleNode("ShowPointAnim");
-                    ProgramSettings.ShowPointAnim = getBool("Value");
+                    if (tryGetSingleNode(settings, "TwoColumns"))
+                        ProgramSettings.TwoColumns = getBool("Value");
 
-                    tempElement = settings.SelectSingleNode("AnimatedBackground");
-                    ProgramSettings.AnimatedBackground = getBool("Value");
+                    if (tryGetSingleNode(settings, "MaxMembersInColumn"))
+                        ProgramSettings.MaxMembersInColumn = getInt("Value");
 
-                    tempElement = settings.SelectSingleNode("VideoBackground");
-                    ProgramSettings.VideoBackground = getBool("Value");
+                    if (tryGetSingleNode(settings, "FinalPhrase"))
+                        ProgramSettings.FinalPhrase = getStr("Value");
 
-                    tempElement = settings.SelectSingleNode("VideoPath");
-                    ProgramSettings.VideoPath = getStr("Value");
+                    if (tryGetSingleNode(settings, "ShowPointAnim"))
+                        ProgramSettings.ShowPointAnim = getBool("Value");
 
-                    tempElement = settings.SelectSingleNode("AnimMoveTime");
-                    ProgramSettings.AnimMoveTime = TimeSpan.FromMilliseconds(getDouble("Value"));
+                    if (tryGetSingleNode(settings, "AnimatedBackground"))
+                        ProgramSettings.AnimatedBackground = getBool("Value");
 
-                    tempElement = settings.SelectSingleNode("AnimAppearTime");
-                    ProgramSettings.AnimAppearTime = TimeSpan.FromMilliseconds(getDouble("Value"));
+                    if (tryGetSingleNode(settings, "VideoBackground"))
+                        ProgramSettings.VideoBackground = getBool("Value");
 
-                    tempElement = settings.SelectSingleNode("AnimPause");
-                    ProgramSettings.AnimPause = TimeSpan.FromMilliseconds(getDouble("Value"));
+                    if (tryGetSingleNode(settings, "VideoPath"))
+                        ProgramSettings.VideoPath = getStr("Value");
 
-                    tempElement = settings.SelectSingleNode("AnimPointBarPause");
-                    ProgramSettings.AnimPointBarPause = TimeSpan.FromMilliseconds(getDouble("Value"));
+                    if (tryGetSingleNode(settings, "AnimMoveTime"))
+                        ProgramSettings.AnimMoveTime = TimeSpan.FromMilliseconds(getDouble("Value"));
 
-                    tempElement = settings.SelectSingleNode("BackgroundColor1");
-                    ProgramSettings.BackgroundColor1 = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "AnimAppearTime"))
+                        ProgramSettings.AnimAppearTime = TimeSpan.FromMilliseconds(getDouble("Value"));
 
-                    tempElement = settings.SelectSingleNode("BackgroundColor2");
-                    ProgramSettings.BackgroundColor2 = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "AnimPause"))
+                        ProgramSettings.AnimPause = TimeSpan.FromMilliseconds(getDouble("Value"));
 
-                    tempElement = settings.SelectSingleNode("BackgroundAnimPeriod");
-                    ProgramSettings.BackgroundAnimPeriod = TimeSpan.FromMilliseconds(getDouble("Value"));
+                    if (tryGetSingleNode(settings, "AnimPointBarPause"))
+                        ProgramSettings.AnimPointBarPause = TimeSpan.FromMilliseconds(getDouble("Value"));
 
-                    tempElement = settings.SelectSingleNode("BackgroundAppearTime");
-                    ProgramSettings.BackgroundAppearTime = TimeSpan.FromMilliseconds(getDouble("Value"));
+                    if (tryGetSingleNode(settings, "BackgroundColor1"))
+                        ProgramSettings.BackgroundColor1 = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("LowerPhraseFontWeight");
-                    ProgramSettings.LowerPhraseFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+                    if (tryGetSingleNode(settings, "BackgroundColor2"))
+                        ProgramSettings.BackgroundColor2 = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("LowerPhraseFontColor");
-                    ProgramSettings.LowerPhraseFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+                    if (tryGetSingleNode(settings, "BackgroundAnimPeriod"))
+                        ProgramSettings.BackgroundAnimPeriod = TimeSpan.FromMilliseconds(getDouble("Value"));
 
-                    tempElement = settings.SelectSingleNode("LowerPhraseOffset");
-                    ProgramSettings.LowerPhraseOffset = getDouble("Value");
+                    if (tryGetSingleNode(settings, "BackgroundAppearTime"))
+                        ProgramSettings.BackgroundAppearTime = TimeSpan.FromMilliseconds(getDouble("Value"));
 
-                    tempElement = settings.SelectSingleNode("LowerPhraseFontSize");
-                    ProgramSettings.LowerPhraseFontSize = getDouble("Value");
+                    if (tryGetSingleNode(settings, "LowerPhraseFontWeight"))
+                        ProgramSettings.LowerPhraseFontWeight = Settings.ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
 
-                    tempElement = settings.SelectSingleNode("LowerPhraseShowMode");
-                    ProgramSettings.LowerPhraseShowMode = (ProgramSettings.ShowMode)getInt("Value");
+                    if (tryGetSingleNode(settings, "LowerPhraseFontColor"))
+                        ProgramSettings.LowerPhraseFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
-                    tempElement = settings.SelectSingleNode("LowerPhrase");
-                    ProgramSettings.LowerPhrase = getStr("Value");
+                    if (tryGetSingleNode(settings, "LowerPhraseOffset"))
+                        ProgramSettings.LowerPhraseOffset = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "LowerPhraseFontSize"))
+                        ProgramSettings.LowerPhraseFontSize = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "LowerPhraseShowMode"))
+                        ProgramSettings.LowerPhraseShowMode = (ProgramSettings.ShowMode)getInt("Value");
+
+                    if (tryGetSingleNode(settings, "LowerPhrase"))
+                        ProgramSettings.LowerPhrase = getStr("Value");
                     #endregion
+
+                    if (errorList.Length != 0)
+                        MessageBox.Show($"Во время загрузки не удалось считать следующие данные: {errorList.ToString()}", "Ошибка загрузки", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 catch (FormatException fx)
                 {
