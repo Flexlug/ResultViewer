@@ -846,7 +846,7 @@ namespace ResultViewerWPF
                     #endregion
 
                     if (errorList.Length != 0)
-                        MessageBox.Show($"Во время загрузки не удалось считать следующие данные: {errorList.ToString()}", "Ошибка загрузки", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show($"Возникли некоторые ошибки во время чтения файла. Данные участников и жюри успешно считаны, но не получилось получить следующие настройки: {errorList.ToString()}", "Ошибка загрузки", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 catch (FormatException fx)
                 {
