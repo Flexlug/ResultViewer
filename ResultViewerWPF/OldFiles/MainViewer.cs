@@ -883,7 +883,6 @@ namespace ResultViewerWPF
                     isWorking = true;
                     Start();
                 }
-
             }
         }
     }

@@ -8,7 +8,7 @@
         Title="EditInvolved" MinHeight="300" MinWidth="400" Width="651.757" Height="439.784" Background="#FFD3D3DC" Closing="Window_Closing">
     <Grid Grid.IsSharedSizeScope="true">
         <Grid.RowDefinitions>
-            <RowDefinition Height="130"/>
+            <RowDefinition Height="150"/>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
@@ -26,15 +26,15 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
 
             <Label Content="Жюри:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left"/>
-            <TextBox x:Name="NewJuryName" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="3" KeyDown="NewJuryName_KeyDown" TextChanged="NewJuryName_TextChanged"/>
+            <TextBox x:Name="NewJuryName" AcceptsReturn="True" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="3" KeyDown="NewJuryName_KeyDown" TextChanged="NewJuryName_TextChanged"/>
             <Button x:Name="AddJury" Content="Добавить" Grid.Column="1" Grid.Row="2" Margin="3" Click="AddJury_Click"/>
             <Button x:Name="RemoveJury" Content="Удалить" Grid.Column="2" Grid.Row="2" Margin="3" Click="RemoveJury_Click"/>
             <Label x:Name="JuryCount" Content="Количество жюри: 0" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3"/>

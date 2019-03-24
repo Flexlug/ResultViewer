@@ -45,41 +45,48 @@ namespace ResultViewerWPF.Viewer
         public JuryBar(Canvas parentCanvas, string name)
         {
             // Инициализируем графическую составляющую
-            mainPanel = new Grid();
+            mainPanel = new Grid()
+            {
+                // Ширина
+                MinWidth = ProgramSettings.JuryPanelWidth,
+                // Высотаэ
+                MinHeight = ProgramSettings.JuryPanelHeight,
+                // Цвет фона панели
+                Background = new SolidColorBrush(ProgramSettings.JuryPanelColor),
+                // Горизонтальное центрирование
+                HorizontalAlignment = HorizontalAlignment.Center,
+                // Вертикальное центрирование
+                VerticalAlignment = VerticalAlignment.Center,
+                
+            };
 
             // Ставим имя
             Name = name;
-
-            // Фон панели
-            Rectangle mainRectangle = new Rectangle()
-            {
-                // Ширина
-                Width = ProgramSettings.JuryPanelWidth,
-                // Высотаэ
-                Height = ProgramSettings.JuryPanelHeight,
-                // Цвет фона панели
-                Fill = new SolidColorBrush(ProgramSettings.JuryPanelColor),
-                // Вертикальное центрирование
-                VerticalAlignment = VerticalAlignment.Center
-            };
 
             // Имя жюри
             juryName = new TextBlock()
             {
                 // Текст
                 Text = Name,
+                // Положение текста
+                TextAlignment = TextAlignment.Center,
                 // Размер шрифта
                 FontSize = ProgramSettings.JuryFontSize,
                 // Стиль текста
                 FontWeight = FontWeights.Thin,
+                // Максимально допустимая ширина TextBox-a
+                MaxWidth = ProgramSettings.JuryPanelWidth,
+                // Максмально допустимая высота TextBox-а
+                MaxHeight = ProgramSettings.JuryPanelHeight,
+                // Горизонтальное центрирование
+                HorizontalAlignment = HorizontalAlignment.Center,
                 // Вертикальное центрирование
                 VerticalAlignment = VerticalAlignment.Center,
-                // Горизонтальное центрирование
-                HorizontalAlignment = HorizontalAlignment.Center
+                // Для построчного переноса текста
+                TextWrapping = TextWrapping.Wrap
             };
 
             // Расставляем элементы
-            mainPanel.Children.Add(mainRectangle);
             mainPanel.Children.Add(juryName);
 
             // Инициализируем TranslateGroup
