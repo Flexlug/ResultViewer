@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+
+using ResultViewerWPF.Viewer.Primitives;
 
 namespace ResultViewerWPF.Viewer
 {
@@ -60,9 +58,9 @@ namespace ResultViewerWPF.Viewer
             ColorAnimation colorAnimation = new ColorAnimation();
 
             // Настраиваем анимацию в соответствии с найтроками графики
-            colorAnimation.From = ProgramSettings.BackgroundColor1;
-            colorAnimation.To = ProgramSettings.BackgroundColor2;
-            colorAnimation.Duration = ProgramSettings.BackgroundAnimPeriod;
+            colorAnimation.From = Program.Settings.BackgroundColor1;
+            colorAnimation.To = Program.Settings.BackgroundColor2;
+            colorAnimation.Duration = Program.Settings.BackgroundAnimPeriod;
             colorAnimation.RepeatBehavior = RepeatBehavior.Forever;
             colorAnimation.AutoReverse = true;
 
@@ -89,7 +87,7 @@ namespace ResultViewerWPF.Viewer
             // Настраиваем анимацию в соответствии с настройками графики
             colorAnimation.From = Colors.Black;
             colorAnimation.To = Colors.Transparent;
-            colorAnimation.Duration = ProgramSettings.BackgroundAppearTime;
+            colorAnimation.Duration = Program.Settings.BackgroundAppearTime;
             colorAnimation.AutoReverse = false;
             colorAnimation.RepeatBehavior = new RepeatBehavior(1);
 
@@ -122,7 +120,7 @@ namespace ResultViewerWPF.Viewer
 
             DoubleAnimation scalingAnimationCenterX = new DoubleAnimation()
             {
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 DecelerationRatio = 0.4,
                 FillBehavior = FillBehavior.Stop
             };
@@ -137,7 +135,7 @@ namespace ResultViewerWPF.Viewer
 
             DoubleAnimation scalingAnimationCenterY = new DoubleAnimation()
             {
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 DecelerationRatio = 0.4,
                 FillBehavior = FillBehavior.Stop
             };
@@ -154,17 +152,17 @@ namespace ResultViewerWPF.Viewer
 
             #region Scaling animation
 
-            
+
             // Создаём анимации
             DoubleAnimation scalingAnimationAxisX = new DoubleAnimation()
             {
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 DecelerationRatio = 0.4,
                 FillBehavior = FillBehavior.Stop
             };
             DoubleAnimation scalingAnimationAxisY = new DoubleAnimation()
             {
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 DecelerationRatio = 0.4,
                 FillBehavior = FillBehavior.Stop
             };
@@ -241,14 +239,14 @@ namespace ResultViewerWPF.Viewer
         public static void ChangeMemberColor(MemberBar coloringBar, Color _destColor, EventHandler afterCompleted = null)
         {
             // Смотрим, какой цвет нам нужен
-            Color destColor = _destColor, 
+            Color destColor = _destColor,
                   currentColor = (coloringBar.mainRectangle.Fill as SolidColorBrush).Color;
-            
+
             // Создаём соответствующую анимацию
             ColorAnimation colorAnimation = new ColorAnimation()
             {
                 // Длительность анимации
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 // Для корректной работы события Completed
                 FillBehavior = FillBehavior.Stop,
                 // Начальный цвет
@@ -296,14 +294,14 @@ namespace ResultViewerWPF.Viewer
             // Создаём анимации
             DoubleAnimation movingAnimationAxisX = new DoubleAnimation()
             {
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 DecelerationRatio = 0.4,
                 FillBehavior = FillBehavior.Stop
             };
             DoubleAnimation movingAnimationAxisY = new DoubleAnimation()
-            {                
-                Duration = ProgramSettings.AnimAppearTime,
-                DecelerationRatio = 0.4,                
+            {
+                Duration = Program.Settings.AnimAppearTime,
+                DecelerationRatio = 0.4,
                 FillBehavior = FillBehavior.Stop
             };
 
@@ -318,7 +316,7 @@ namespace ResultViewerWPF.Viewer
             movingAnimationAxisX.To = destinationPoint.X;
             movingAnimationAxisY.To = destinationPoint.Y;
             movingBar.movingTo = destinationPoint;
-            
+
             // По завершении анимации применим все изменения
             movingAnimationAxisX.Completed += (obj, ev) =>
             {
@@ -428,14 +426,14 @@ namespace ResultViewerWPF.Viewer
         /// </summary>
         /// <param name="memberBar">Панель типа MemberBar, которую необходимо проявить</param>
         /// <param name="afterComplited">Следующее действие, которое будет выполнено только по завершении работы данной анимамции</param>
-        public static void Appear(MemberBar memberBar, EventHandler afterCompleted = null) => barAppear(memberBar, ProgramSettings.MemberPanelOpacity, afterCompleted);
+        public static void Appear(MemberBar memberBar, EventHandler afterCompleted = null) => barAppear(memberBar, Program.Settings.MemberPanelOpacity, afterCompleted);
 
         /// <summary>
         /// Делает панель JuryBar видимой
         /// </summary>
         /// <param name="juryBar">Панель типа JuryBar, которую необходимо проявить</param>
         /// <param name="afterComplited">Следующее действие, которое будет выполнено только по завершении работы данной анимамции</param>
-        public static void Appear(JuryBar juryBar, EventHandler afterCompleted = null) => barAppear(juryBar, ProgramSettings.JuryPanelOpacity, afterCompleted);
+        public static void Appear(JuryBar juryBar, EventHandler afterCompleted = null) => barAppear(juryBar, Program.Settings.JuryPanelOpacity, afterCompleted);
 
         /// <summary>
         /// Делает панель TextBar видимой
@@ -447,15 +445,15 @@ namespace ResultViewerWPF.Viewer
         {
             barAppear(textBar, 1, afterCompleted);
             textBar.IsVisible = true;
-        } 
+        }
 
         /// <summary>
         /// Делает панель видимой
         /// </summary>
         /// <param name="pointBar">Панель типа PointBar, которую необходимо проявить</param>
         /// <param name="afterComplited">Следующее действие, которое будет выполнено только по завершении работы данной анимамции</param>
-        public static void Appear(PointBar pointBar, EventHandler afterCompleted = null) => barAppear(pointBar, ProgramSettings.PointBarPanelOpacity, afterCompleted);
-        
+        public static void Appear(PointBar pointBar, EventHandler afterCompleted = null) => barAppear(pointBar, Program.Settings.PointBarPanelOpacity, afterCompleted);
+
         public static void barAppear(Bar appearingPanel, double finalOpacity, EventHandler afterCompleted = null)
         {
             // Создаём анимацию
@@ -466,7 +464,7 @@ namespace ResultViewerWPF.Viewer
                 // В любой другой
                 To = finalOpacity,
                 // Время проявления
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 // Для корректного завершения анимации
                 FillBehavior = FillBehavior.Stop
             };
@@ -510,11 +508,11 @@ namespace ResultViewerWPF.Viewer
             DoubleAnimation disappearAnimation = new DoubleAnimation()
             {
                 // Из непрозрачного
-                From = ProgramSettings.JuryPanelOpacity,
+                From = Program.Settings.JuryPanelOpacity,
                 // В любой другой
                 To = 0,
                 // Время проявления
-                Duration = ProgramSettings.AnimAppearTime,
+                Duration = Program.Settings.AnimAppearTime,
                 // Для корректного завершения анимации
                 FillBehavior = FillBehavior.Stop
             };

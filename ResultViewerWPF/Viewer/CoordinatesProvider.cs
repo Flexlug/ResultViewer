@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
+using ResultViewerWPF.Viewer.Primitives;
+
 namespace ResultViewerWPF.Viewer
 {
     /// <summary>
@@ -50,7 +52,7 @@ namespace ResultViewerWPF.Viewer
             maxColumnCount = _maxColumnCount;
             pb = _pb;
 
-            TwoColumns = ProgramSettings.TwoColumns;
+            TwoColumns = Program.Settings.TwoColumns;
         }
 
         /// <summary>
@@ -60,7 +62,7 @@ namespace ResultViewerWPF.Viewer
         public Point Jury()
         {
             return new Point(width / 2,
-                             ((int)(ProgramSettings.TopJuryInterval + (ProgramSettings.JuryPanelHeight / 2))));
+                             ((int)(Program.Settings.TopJuryInterval + (Program.Settings.JuryPanelHeight / 2))));
         }
 
         /// <summary>
@@ -75,17 +77,17 @@ namespace ResultViewerWPF.Viewer
                 // Проверяем, в какой колонке у нас будет расположен участник
                 if (MemberIndex < maxColumnCount)
                     // Левая колонка
-                    return new Point((width / 2) - (ProgramSettings.MemberPanelWidth / 2) - ProgramSettings.MemberColumnInterval,
-                                     ((int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset + (ProgramSettings.MemberPanelHeight + ProgramSettings.MemberInterval) * (MemberIndex))));
+                    return new Point((width / 2) - (Program.Settings.MemberPanelWidth / 2) - Program.Settings.MemberColumnInterval,
+                                     ((int)(Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset + (Program.Settings.MemberPanelHeight + Program.Settings.MemberInterval) * (MemberIndex))));
                 else
                     // Правая колонка
-                    return new Point((width / 2) + (ProgramSettings.MemberPanelWidth / 2) + ProgramSettings.MemberColumnInterval,
-                                     ((int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset + (ProgramSettings.MemberPanelHeight + ProgramSettings.MemberInterval) * (MemberIndex - maxColumnCount))));
+                    return new Point((width / 2) + (Program.Settings.MemberPanelWidth / 2) + Program.Settings.MemberColumnInterval,
+                                     ((int)(Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset + (Program.Settings.MemberPanelHeight + Program.Settings.MemberInterval) * (MemberIndex - maxColumnCount))));
             }
             else
             {
                 return new Point(width / 2,
-                                 (int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset + (ProgramSettings.MemberPanelHeight + ProgramSettings.MemberInterval) * MemberIndex));
+                                 (int)(Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset + (Program.Settings.MemberPanelHeight + Program.Settings.MemberInterval) * MemberIndex));
             }
         }
 
@@ -106,21 +108,21 @@ namespace ResultViewerWPF.Viewer
                 // Запрашивает координаты какого-то участника
                 if (PlaceInd < maxColumnCount)
                     // Левая колонка
-                    return new Point((width / 2) - ProgramSettings.MemberPanelWidth - ProgramSettings.MemberColumnInterval/* + (ProgramSettings.MemberPanelWidth / 2)*/,
-                                 (int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset - ProgramSettings.MemberPanelHeight / 2 + ProgramSettings.MemberInterval + (ProgramSettings.MemberPanelHeight + (ProgramSettings.MemberInterval + 1.4)) * PlaceInd));
+                    return new Point((width / 2) - Program.Settings.MemberPanelWidth - Program.Settings.MemberColumnInterval/* + (ProgramSettings.MemberPanelWidth / 2)*/,
+                                 (int)(Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - Program.Settings.MemberPanelHeight / 2 + Program.Settings.MemberInterval + (Program.Settings.MemberPanelHeight + (Program.Settings.MemberInterval + 1.4)) * PlaceInd));
                 else
                     // Правая колонка
-                    return new Point((width / 2) + ProgramSettings.MemberColumnInterval + (ProgramSettings.MemberPointsPanelWidth / 4),
-                                 (int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset - ProgramSettings.MemberPanelHeight / 2 + ProgramSettings.MemberInterval + (ProgramSettings.MemberPanelHeight + (ProgramSettings.MemberInterval * 1.4)) * (PlaceInd - maxColumnCount)));
+                    return new Point((width / 2) + Program.Settings.MemberColumnInterval + (Program.Settings.MemberPointsPanelWidth / 4),
+                                 (int)(Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - Program.Settings.MemberPanelHeight / 2 + Program.Settings.MemberInterval + (Program.Settings.MemberPanelHeight + (Program.Settings.MemberInterval * 1.4)) * (PlaceInd - maxColumnCount)));
             }
             else
-                return new Point((width / 2) - ProgramSettings.MemberPanelWidth / 2,
-                                 (int)(ProgramSettings.TopJuryInterval + ProgramSettings.JuryPanelHeight + ProgramSettings.JuryMemberOffset - ProgramSettings.MemberPanelHeight / 2 + ProgramSettings.MemberInterval + (ProgramSettings.MemberPanelHeight + (ProgramSettings.MemberInterval + 1.4)) * PlaceInd));
+                return new Point((width / 2) - Program.Settings.MemberPanelWidth / 2,
+                                 (int)(Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - Program.Settings.MemberPanelHeight / 2 + Program.Settings.MemberInterval + (Program.Settings.MemberPanelHeight + (Program.Settings.MemberInterval + 1.4)) * PlaceInd));
         }
 
         public Point LowerFrase(double actualWidth, double actualHeight)
         {
-            return new Point(width / 2 - actualWidth / 2, height / 2 + actualHeight / 2 + ProgramSettings.LowerPhraseOffset);
+            return new Point(width / 2 - actualWidth / 2, height / 2 + actualHeight / 2 + Program.Settings.LowerPhraseOffset);
         }
     }
 }

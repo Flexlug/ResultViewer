@@ -45,8 +45,8 @@ namespace ResultViewerWPF
             appLogic = logic;
 
             // Проверим, надо ли вводить дополнительные данные
-            if (Viewer.ProgramSettings.ShowMemberResultMode == Viewer.ProgramSettings.ResultShowMode.Visible ||
-                Viewer.ProgramSettings.ShowMemberResultMode == Viewer.ProgramSettings.ResultShowMode.AlwaysVisible)
+            if (Program.Settings.ShowMemberResultMode == Program.Settings.ResultShowMode.Visible ||
+                Program.Settings.ShowMemberResultMode == Program.Settings.ResultShowMode.AlwaysVisible)
             {
                 // Надо, значит оставляем все элементы включенными. Также подгрузим дополнительную информацию
                 selectedValues = appLogic.GetValues();
@@ -180,7 +180,7 @@ namespace ResultViewerWPF
             // Очищаем список конкурсантов
             MemberList.Items.Clear();
 
-            if (Viewer.ProgramSettings.ShowMemberResultMode == Viewer.ProgramSettings.ResultShowMode.Hidden)
+            if (Program.Settings.ShowMemberResultMode == Program.Settings.ResultShowMode.Hidden)
             {
                 // Получаем баллы по выбранному жюри
                 double[] points = selectedPoints[SelectedJury.SelectedIndex];

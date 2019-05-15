@@ -37,6 +37,23 @@ namespace MovingObjectWPF
             MovingObject.RenderTransform = movingObjTrans;
 
 
+            MediaPlayer md = new MediaPlayer();
+
+            DoubleAnimation volumeAnimation = new DoubleAnimation
+            {
+                From = 0,
+                To = 1
+            };
+            volumeAnimation.Completed += (ev, arg) =>
+            {
+                md.Volume = 1;
+            };
+
+            volumeAnimation.BeginAnimation(md.Volume, TimeSpan.FromSeconds(3));
+
+
+
+
             // Начальная инициализация анимаций
             XCordAnim = new DoubleAnimation()
             {

@@ -105,13 +105,13 @@ namespace ResultViewerWPF
                     table[member].Points += point;
 
             // Сортировка участников
-            if (Viewer.ProgramSettings.MemberSortingMode == Viewer.ProgramSettings.SortingMode.Ascending)
+            if (Program.Settings.MemberSortingMode == Program.Settings.SortingMode.Ascending)
                 table = table.OrderByDescending(x => x.Points).ToList();
             else
                 table = table.OrderBy(x => x.Points).ToList();
 
             // Расстановка мест
-            if (Viewer.ProgramSettings.TrueTopRating)
+            if (Program.Settings.TrueTopRating)
             {
                 for (int i = 0; i < table.Count; i++)
                     if (i == 0)

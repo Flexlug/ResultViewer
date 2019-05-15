@@ -1,21 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Collections.Generic;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using ResultViewerWPF;
+using ResultViewerWPF.Viewer.Dialogs;
+using ResultViewerWPF.Compitability;
 
 namespace ResultViewerWPF
 {
@@ -27,17 +20,17 @@ namespace ResultViewerWPF
         /// <summary>
         /// Главная логика приложения
         /// </summary>
-        public Logic AppLogic;        
+        public Logic AppLogic;
 
         /// <summary>
         /// Окно для быстрого показа результатов
         /// </summary>
         public QuickResultShow quickShow = null;
-        
+
         /// <summary>
         /// Окно с настройками программы
         /// </summary>
-        public Settings.ViewerSettings settings = null;
+        public ViewerSettings settings = null;
 
         /// <summary>
         /// Режим совсестимости со старым режимом
@@ -58,7 +51,7 @@ namespace ResultViewerWPF
                     Uri myUri = new Uri("program_background.bmp", UriKind.RelativeOrAbsolute);
                     BmpBitmapDecoder loadingImage = new BmpBitmapDecoder(myUri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
                     BitmapSource image = loadingImage.Frames[0];
-                    Viewer.ProgramSettings.MainBackground = new ImageBrush(image);
+                    Program.Settings.MainBackground = new ImageBrush(image);
                 }
                 catch (Exception exc)
                 {
@@ -136,7 +129,7 @@ namespace ResultViewerWPF
                 else
                 {
                     // Проверим, можно ли начать показ с данного жюри
-                    if (Viewer.ProgramSettings.StartJury < AppLogic.GetJuryChoice().Count)
+                    if (Program.Settings.StartJury < AppLogic.GetJuryChoice().Count)
                     {
                         (new Viewer.ContentViewer(AppLogic)).ShowDialog();
                     }
@@ -160,7 +153,7 @@ namespace ResultViewerWPF
                         Tuple<string[], string[], int[][]> convertedLogic = LogicConverter.DeprecateLogic(AppLogic);
 
                         // Инициализируем визуализатор
-                        (new MainViewer(convertedLogic, Viewer.ProgramSettings.OldSettings)).ShowDialog();
+                        (new MainViewer(convertedLogic, Program.Settings.OldSettings)).ShowDialog();
                         UpdateStatus("Показ завершён");
                     }
                     else
@@ -232,7 +225,7 @@ namespace ResultViewerWPF
                 try
                 {
                     // Сохраняем данные
-                    DataIO.SaveData(AppLogic);
+                    Program.IO.SaveData(AppLogic);
 
                     // Обновляем статус
                     UpdateStatus("Сохранение данных завершено");
@@ -273,7 +266,7 @@ namespace ResultViewerWPF
             try
             {
                 // Грузим данные
-                DataIO.LoadData(AppLogic);
+                Program.IO.LoadData(AppLogic);
 
                 // Уведомляем пользователя об успешной загрузке данных
                 UpdateStatus("Загрузка данных завершена");
@@ -282,9 +275,9 @@ namespace ResultViewerWPF
                 UpdateDataStatus();
 
                 // Возвращаем дефолтный FilePath
-                DataIO.RestoreDefaultPath();
+                Program.IO.RestoreDefaultPath();
             }
-            catch (System.IO.FileNotFoundException ex)
+            catch (System.IO.FileNotFoundException)
             {
                 // Спрашиваем пользователя, не хочет ли он сам выбрать файл
                 MessageBoxResult result = MessageBox.Show("В указанном расположении файл не был найден. Желаете выбрать путь самостоятельно?", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -310,7 +303,7 @@ namespace ResultViewerWPF
 
                         // Вызываем диалог. Получаем результат диалога
                         System.Windows.Forms.DialogResult res = fileDialog.ShowDialog();
-                        
+
                         // Если пользователь выбрал что-то
                         if (res == System.Windows.Forms.DialogResult.OK)
                         {
@@ -320,19 +313,34 @@ namespace ResultViewerWPF
                                 // Старый формат
                                 case "txt":
                                     // Задаём путь к файлу
-                                    DataIO.FilePath = fileDialog.FileName;
+                                    Program.IO.FilePath = fileDialog.FileName;
 
                                     // Грузим данные
-                                    DataIO.LoadOldData(ref AppLogic);
+                                    Program.IO.LoadOldData(ref AppLogic);
                                     break;
 
                                 // Новый формат
                                 case "xml":
-                                    // Задаём путь к файлу
-                                    DataIO.FilePath = fileDialog.FileName;
 
-                                    // Грузим данные
-                                    DataIO.LoadData(AppLogic);
+                                    // Задаём путь к файлу
+                                    Program.IO.FilePath = fileDialog.FileName;
+
+                                    // Грузим данные в отдельное место
+                                    Logic newLogic = new Logic();
+                                    Program.IO.LoadData(newLogic);
+
+                                    // Если данные удалось загрузить, то чистим старые и заменяем их
+                                    if (!newLogic.IsEmpty())
+                                    {
+                                        AppLogic.Clear();
+                                        AppLogic = newLogic;
+                                    }
+                                    // Если данные не удалось загрузить, то выведем сообщение об ошибке. Старые данные остались нетронутыми
+                                    else
+                                    {
+                                        MessageBox.Show("Не удалось загрузить файл. Возможно файл повреждён", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    }
+
                                     break;
 
                                 // Ух ты! Такого не должно быть. FileDialog должен сам фильтровать расширения
@@ -347,7 +355,7 @@ namespace ResultViewerWPF
                             UpdateDataStatus();
 
                             // Возвращаем дефолтный FilePath
-                            DataIO.RestoreDefaultPath();
+                            Program.IO.RestoreDefaultPath();
                         }
                         else
                         {
@@ -362,7 +370,7 @@ namespace ResultViewerWPF
                     MessageBox.Show($"Неожиданное исключение:\nMessage: {exc.Message}\nSource: {exc.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     // Возвращаем дефолтный FilePath
-                    DataIO.RestoreDefaultPath();
+                    Program.IO.RestoreDefaultPath();
                 }
 
             }
@@ -403,25 +411,35 @@ namespace ResultViewerWPF
                         // Старый формат
                         case "txt":
                             // Задаём путь к файлу
-                            DataIO.FilePath = fileDialog.FileName;
+                            Program.IO.FilePath = fileDialog.FileName;
 
                             // Грузим данные
-                            DataIO.LoadOldData(ref AppLogic);
+                            Program.IO.LoadOldData(ref AppLogic);
                             break;
 
                         // Новый формат
                         case "xml":
+
                             // Задаём путь к файлу
-                            DataIO.FilePath = fileDialog.FileName;
+                            Program.IO.FilePath = fileDialog.FileName;
 
-                            // Грузим данные
-                            DataIO.LoadData(AppLogic);
+                            // Грузим данные в отдельное место
+                            Logic newLogic = new Logic();
+                            Program.IO.LoadData(newLogic);
 
-                            if (AppLogic.IsEmpty())
+                            // Если данные удалось загрузить, то чистим старые и заменяем их
+                            if (!newLogic.IsEmpty())
                             {
-                                MessageBox.Show("Ошибка во время загрузки данных. Возможно файл повреждён", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Information);
+                                AppLogic.Clear();
+                                AppLogic = newLogic;
                             }
-                                break;
+                            // Если данные не удалось загрузить, то выведем сообщение об ошибке. Старые данные остались нетронутыми
+                            else
+                            {
+                                MessageBox.Show("Не удалось загрузить файл. Возможно файл повреждён", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+
+                            break;
 
                         // Ух ты! Такого не должно быть. FileDialog должен сам фильтровать расширения
                         default:
@@ -429,13 +447,13 @@ namespace ResultViewerWPF
                     }
 
                     // Обновляем статус программы
-                    UpdateStatus("Загрузка данных завершена");
+                    UpdateStatus($"Данные загружены из файла {fileDialog.FileName.Split('\\').Last()}");
 
                     // Обновим состояние данных
                     UpdateDataStatus();
 
                     // Возвращаем дефолтный FilePath
-                    DataIO.RestoreDefaultPath();
+                    Program.IO.RestoreDefaultPath();
                 }
                 else
                 {
@@ -502,7 +520,7 @@ namespace ResultViewerWPF
             if (quickShow != null)
                 quickShow.MoveWindow(Left + Width, Top + Height);
         }
-        
+
         /// <summary>
         /// Загрузить тестовую логику
         /// </summary>
@@ -540,32 +558,46 @@ namespace ResultViewerWPF
             // Проверим, есть ли данные, которые можно сохарнить
             if (!AppLogic.IsEmpty())
             {
-                // Попросим пользователя ввести имя нового файла
-                string fileName = Microsoft.VisualBasic.Interaction.InputBox("Введите имя файла: ", "Сохранение файла");
-                // Если пользователь ничего не ввёл, то закрываем диалог
-                if (fileName != string.Empty)
+                // Настроим SaveFileDialog
+                using (System.Windows.Forms.SaveFileDialog saveDailog = new System.Windows.Forms.SaveFileDialog())
                 {
-                    try
+                    // Возможность сохранить только в формате .xml
+                    saveDailog.Filter = "Data file(*.xml)|*.xml";
+
+                    // Изначальная директория - местонахождение .exe файла
+                    saveDailog.InitialDirectory = Environment.CurrentDirectory;
+
+                    // Если диалог был завершён с результатом OK
+                    if (saveDailog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        // Сохраняем данные в файле с указанным именем
-                        DataIO.FilePath = fileName + ".xml";
-                        DataIO.SaveData(AppLogic);
+                        try
+                        {
+                            // Сохраним файл
+                            Program.IO.FilePath = saveDailog.FileName;
+                            Program.IO.SaveData(AppLogic);
 
-                        // Восстановим стандартное имя файла
-                        DataIO.RestoreDefaultPath();
+                            // Восстановис стандартное имя файла
+                            Program.IO.RestoreDefaultPath();
 
-                        // Уведомим пользователя об успешном сохранении данных
-                        UpdateStatus($"Данные успешно сохранены в файле: {fileName}.xml");
+                            // Уведомим пользователя об успешном сохранении данных
+                            UpdateStatus($"Данные успешно сохранены в файле: {saveDailog.FileName.Split('\\').Last().ToString()}");
+                        }
+                        catch (Exception ex)
+                        {
+                            // Такого вообще не должно быть... Выведем сообщение об ошибке. Вернём всё так, как было
+                            MessageBox.Show($"Неожиданное исключение во время сохранения файла: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Program.IO.RestoreDefaultPath();
+                        }
                     }
-                    catch(Exception ex)
+                    else
                     {
-                        // Такого вообще не должно быть... Выведем сообщение об ошибке. Вернём все так, как было
-                        MessageBox.Show($"Неожиданное исключение во время сохранения файла: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        DataIO.RestoreDefaultPath();
+                        MessageBox.Show("Соханение прервано пользователем.", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     }
                 }
-                else
-                    MessageBox.Show("Введена пустая строка", "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Сохранение невозможно. Отсутствуют данные.", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
         }
 
@@ -573,12 +605,12 @@ namespace ResultViewerWPF
         {
             if (CompitabilityMode)
             {
-                (new MVSettings(Viewer.ProgramSettings.OldSettings)).ShowDialog();
+                (new MVSettings(Program.Settings.OldSettings)).ShowDialog();
             }
             else
             {
                 // Откроем окно с настройками, покажем диалог
-                settings = new Settings.ViewerSettings(AppLogic);
+                settings = new ViewerSettings(AppLogic);
                 settings.ShowDialog();
 
                 // Обнулим ссылку

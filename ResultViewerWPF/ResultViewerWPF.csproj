@@ -93,32 +93,36 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Program\Constants.cs" />
     <Compile Include="Classes\Logic.cs" />
+    <Compile Include="Viewer\Dialogs\ColorRangesWizard.xaml.cs">
+      <DependentUpon>ColorRangesWizard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\Dialogs\EditColorRange.xaml.cs">
+      <DependentUpon>EditColorRange.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer\ColorRange.cs" />
     <Compile Include="QuickResultShow.xaml.cs">
       <DependentUpon>QuickResultShow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings\FontWizard.xaml.cs">
-      <DependentUpon>FontWizard.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Settings\ViewerSettings.xaml.cs">
+    <Compile Include="Viewer\Dialogs\ViewerSettings.xaml.cs">
       <DependentUpon>ViewerSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Viewer\CoordinatesProvider.cs" />
     <Compile Include="DevInfo.xaml.cs">
       <DependentUpon>DevInfo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Viewer\FastViewer.xaml.cs">
+    <Compile Include="Viewer\Dialogs\FastViewer.xaml.cs">
       <DependentUpon>FastViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Viewer\ProgramSettings.cs" />
+    <Compile Include="Program\Settings.cs" />
     <Compile Include="Viewer\GraphicsEngine.cs" />
-    <Compile Include="Viewer\Bar.cs" />
-    <Compile Include="Viewer\JuryBar.cs" />
-    <Compile Include="Viewer\MemberBar.cs" />
-    <Compile Include="Viewer\PointBar.cs" />
-    <Compile Include="Viewer\TextBar.cs" />
-    <Compile Include="Viewer\Viewer.xaml.cs">
+    <Compile Include="Viewer\Primitives\Bar.cs" />
+    <Compile Include="Viewer\Primitives\JuryBar.cs" />
+    <Compile Include="Viewer\Primitives\MemberBar.cs" />
+    <Compile Include="Viewer\Primitives\PointBar.cs" />
+    <Compile Include="Viewer\Primitives\TextBar.cs" />
+    <Compile Include="Viewer\Dialogs\Viewer.xaml.cs">
       <DependentUpon>Viewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Viewer\ViewerDebug.xaml.cs">
@@ -140,24 +144,24 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\DataIO.cs" />
-    <Compile Include="OldFiles\Compatibility\LogicConverter.cs" />
-    <Compile Include="OldFiles\Graphics\ContestBar.cs" />
-    <Compile Include="OldFiles\Graphics\DrawPointBarEventArgs.cs" />
-    <Compile Include="OldFiles\Graphics\JuryBar.cs" />
-    <Compile Include="OldFiles\MainViewer.cs">
+    <Compile Include="Program\IO.cs" />
+    <Compile Include="Compitability\LogicConverter.cs" />
+    <Compile Include="Compitability\Graphics\ContestBar.cs" />
+    <Compile Include="Compitability\Graphics\DrawPointBarEventArgs.cs" />
+    <Compile Include="Compitability\Graphics\JuryBar.cs" />
+    <Compile Include="Compitability\MainViewer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="OldFiles\MainViewer.Designer.cs" />
-    <Compile Include="OldFiles\Graphics\PlaceBar.cs" />
-    <Compile Include="OldFiles\Graphics\PointBar.cs" />
-    <Compile Include="OldFiles\MVSettings.cs">
+    <Compile Include="Compitability\MainViewer.Designer.cs" />
+    <Compile Include="Compitability\Graphics\PlaceBar.cs" />
+    <Compile Include="Compitability\Graphics\PointBar.cs" />
+    <Compile Include="Compitability\MVSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="OldFiles\MVSettings.Designer.cs">
+    <Compile Include="Compitability\MVSettings.Designer.cs">
       <DependentUpon>MVSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="OldFiles\OldSettingsProvider.cs" />
+    <Compile Include="Compitability\OldSettingsProvider.cs" />
     <Compile Include="EditInvolved.xaml.cs">
       <DependentUpon>EditInvolved.xaml</DependentUpon>
     </Compile>
@@ -172,11 +176,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Settings\FontWizard.xaml">
+    <Page Include="Viewer\Dialogs\ColorRangesWizard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Settings\ViewerSettings.xaml">
+    <Page Include="Viewer\Dialogs\EditColorRange.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Viewer\Dialogs\ViewerSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,11 +192,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Viewer\FastViewer.xaml">
+    <Page Include="Viewer\Dialogs\FastViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Viewer\Viewer.xaml">
+    <Page Include="Viewer\Dialogs\Viewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -211,8 +219,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="OldFiles\MainViewer.resx" />
-    <EmbeddedResource Include="OldFiles\MVSettings.resx">
+    <EmbeddedResource Include="Compitability\MainViewer.resx" />
+    <EmbeddedResource Include="Compitability\MVSettings.resx">
       <DependentUpon>MVSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
