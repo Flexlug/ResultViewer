@@ -115,7 +115,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             // Проверим, нет ли пустых полей
-            if (!string.IsNullOrWhiteSpace(ColorRangeName.Text) && !string.IsNullOrWhiteSpace(RangeCountEdit.Text))
+            if (!string.IsNullOrWhiteSpace(ColorRangeName.Text) && !string.IsNullOrWhiteSpace(RangeCountEdit.Text) && int.TryParse(RangeCountEdit.Text, out int tempInt))
             {
                 // Если нет, то указываем, что с этой формы можно брать значения
                 DialogResult = true;
@@ -131,6 +131,17 @@ namespace ResultViewerWPF.Viewer.Dialogs
         {
             DialogResult = false;
             Close();
+        }
+
+        /// <summary>
+        /// Фильтрование ввода. Только цифры
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RangeCountEdit_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (char.IsDigit((char)e.Key))
+                e.Handled = true;
         }
     }
 }

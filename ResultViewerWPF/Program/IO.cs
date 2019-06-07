@@ -99,6 +99,7 @@ namespace ResultViewerWPF.Program
             settings.Add(new XElement("MemberPanelHeight", new XAttribute("Value", Program.Settings.MemberPanelHeight)));
             settings.Add(new XElement("MemberNameFontSize", new XAttribute("Value", Program.Settings.MemberNameFontSize)));
             settings.Add(new XElement("MemberPanelOpacity", new XAttribute("Value", Program.Settings.MemberPanelOpacity)));
+            settings.Add(new XElement("MemberPanelStrokeWidth", new XAttribute("Value", Program.Settings.MemberPanelStrokeWidth)));
 
             settings.Add(new XElement("MemberPanelColor", new XAttribute("R", Program.Settings.MemberPanelColor.R),
                                                              new XAttribute("G", Program.Settings.MemberPanelColor.G),
@@ -116,6 +117,11 @@ namespace ResultViewerWPF.Program
                                                                     new XAttribute("G", Program.Settings.MemberPanelChosenColor2.G),
                                                                     new XAttribute("B", Program.Settings.MemberPanelChosenColor2.B),
                                                                     new XAttribute("A", Program.Settings.MemberPanelChosenColor2.A)));
+
+            settings.Add(new XElement("MemberPanelStrokeColor", new XAttribute("R", Program.Settings.MemberPanelStrokeColor.R),
+                                                                    new XAttribute("G", Program.Settings.MemberPanelStrokeColor.G),
+                                                                    new XAttribute("B", Program.Settings.MemberPanelStrokeColor.B),
+                                                                    new XAttribute("A", Program.Settings.MemberPanelStrokeColor.A)));
 
             settings.Add(new XElement("MemberPanelHighlightLeaders", new XAttribute("Value", Program.Settings.MemberPanelHighlightLeaders)));
             
@@ -541,7 +547,7 @@ namespace ResultViewerWPF.Program
                             tempElement = parentNode.SelectSingleNode(nodeName) ?? throw new NullReferenceException();                            
                             return true;
                         }
-                        catch (Exception exc)
+                        catch (Exception)
                         {
                             errorList.Append($"{nodeName}\n");
                             return false;
@@ -627,6 +633,9 @@ namespace ResultViewerWPF.Program
                     if (tryGetSingleNode(settings, "MemberNameFontSize"))
                         Program.Settings.MemberNameFontSize = getDouble("Value");
 
+                    if (tryGetSingleNode(settings, "MemberPanelStrokeWidth"))
+                        Program.Settings.MemberPanelStrokeWidth = getDouble("Value");
+
                     if (tryGetSingleNode(settings, "MemberPanelOpacity"))
                         Program.Settings.MemberPanelOpacity = getDouble("Value");
 
@@ -638,6 +647,9 @@ namespace ResultViewerWPF.Program
 
                     if (tryGetSingleNode(settings, "MemberPanelChosenColor2"))
                         Program.Settings.MemberPanelChosenColor2 = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+
+                    if (tryGetSingleNode(settings, "MemberPanelStrokeColor"))
+                        Program.Settings.MemberPanelStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
                     if (tryGetSingleNode(settings, "MemberPanelHighlightLeaders"))
                         Program.Settings.MemberPanelHighlightLeaders = getBool("Value");

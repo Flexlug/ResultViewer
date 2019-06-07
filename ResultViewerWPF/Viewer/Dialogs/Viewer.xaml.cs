@@ -178,7 +178,7 @@ namespace ResultViewerWPF.Viewer
 
                                         video.Play();
                                     }
-                                    catch(Exception exc)
+                                    catch(Exception)
                                     {
                                         MessageBox.Show("Ошибка при загрузке видео" + Program.Settings.VideoPath, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                                         Background = Program.Settings.MainBackground;

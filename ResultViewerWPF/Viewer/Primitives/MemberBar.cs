@@ -209,13 +209,17 @@ namespace ResultViewerWPF.Viewer.Primitives
             mainRectangle = new Rectangle()
             {
                 // Ширина
-                Width = Program.Settings.MemberPanelWidth + Program.Settings.MemberPointsPanelWidth,
+                Width = Program.Settings.MemberPanelWidth,
                 // Высота
                 Height = Program.Settings.MemberPanelHeight,
                 // Цвет фона панели
                 Fill = new SolidColorBrush(Program.Settings.MemberPanelColor),
                 // Вертикальное центрирование
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Center,
+                // Цвет контура
+                Stroke = new SolidColorBrush(Program.Settings.MemberPanelStrokeColor),
+                // Ширина контура
+                StrokeThickness = Program.Settings.MemberPanelStrokeWidth,
             };
 
             // Панель баллов
@@ -280,7 +284,8 @@ namespace ResultViewerWPF.Viewer.Primitives
             mainPanel.Children.Add(mainRectangle);                                                                         // Фон
             mainPanel.Children.Add(memberName);                                                                            // Имя участника
             Canvas.SetTop(memberName, Program.Settings.MemberPanelHeight / 2 - Program.Settings.MemberNameFontSize / 2);
-            Canvas.SetLeft(memberName, Program.Settings.MemberPointsPanelWidth + 10);                                                // Отодвигаем имя участника
+            Canvas.SetLeft(mainRectangle, Program.Settings.MemberPointsPanelWidth);                                                // Отодвигаем главную панель с фоном
+            Canvas.SetLeft(memberName, Program.Settings.MemberPointsPanelWidth + 10);                                                // Отодвигаем имя
             pointsPanel.Children.Add(pointsStroke);                                                                             // Контур баллов
             pointsPanel.Children.Add(memberPoints);                                                                             // Количество баллов
             mainPanel.Children.Add(pointsPanel);                                                                           // Панель с баллами

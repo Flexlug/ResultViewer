@@ -46,6 +46,12 @@ namespace ResultViewerWPF.Program
         /// Итоговая прозрачность панели участника после проявления
         /// </summary>
         public static double MemberPanelOpacity = 1;
+
+        /// <summary>
+        /// Ширина контура панели участников
+        /// </summary>
+        public static double MemberPanelStrokeWidth = 1;
+        
         /// <summary>
         /// Цвет панели участника
         /// </summary>
@@ -79,8 +85,16 @@ namespace ResultViewerWPF.Program
             B = 100
         };
 
-
-
+        /// <summary>
+        /// Цвет контура панели участника
+        /// </summary>
+        public static Color MemberPanelStrokeColor = new Color()
+        {
+            A = 255,
+            R = 255,
+            G = 255,
+            B = 255
+        };
 
         /// <summary>
         /// Включает или отключает выделение участников отдельными цветами в финальном показе

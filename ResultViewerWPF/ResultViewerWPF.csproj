@@ -146,15 +146,15 @@
     </Compile>
     <Compile Include="Program\IO.cs" />
     <Compile Include="Compitability\LogicConverter.cs" />
-    <Compile Include="Compitability\Graphics\ContestBar.cs" />
-    <Compile Include="Compitability\Graphics\DrawPointBarEventArgs.cs" />
-    <Compile Include="Compitability\Graphics\JuryBar.cs" />
+    <Compile Include="Compitability\Primitives\ContestBar.cs" />
+    <Compile Include="Compitability\Primitives\DrawPointBarEventArgs.cs" />
+    <Compile Include="Compitability\Primitives\JuryBar.cs" />
     <Compile Include="Compitability\MainViewer.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Compitability\MainViewer.Designer.cs" />
-    <Compile Include="Compitability\Graphics\PlaceBar.cs" />
-    <Compile Include="Compitability\Graphics\PointBar.cs" />
+    <Compile Include="Compitability\Primitives\PlaceBar.cs" />
+    <Compile Include="Compitability\Primitives\PointBar.cs" />
     <Compile Include="Compitability\MVSettings.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -29,12 +29,13 @@ namespace ResultViewerWPF.Compitability
 
             for (int jur = 0; jur < doubleJuryChoice.Length; jur++)
                 for (int comp = 0; comp < doubleJuryChoice[0].Length; comp++)
-                    if (Math.Truncate(doubleJuryChoice[jur][comp]) == 0)
+                    if (Math.Truncate(doubleJuryChoice[jur][comp]) == doubleJuryChoice[jur][comp])
                     {
                         juryChoice[jur][comp] = (int)doubleJuryChoice[jur][comp];
                     }
                     else
                     {
+
                         return false;
                     }
                     

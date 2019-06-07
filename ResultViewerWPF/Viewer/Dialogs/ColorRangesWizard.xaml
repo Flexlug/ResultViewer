@@ -20,7 +20,7 @@
             <Button x:Name="RemoveColorRange" Height="25" Width="100" Content="Удалить" Margin="10" Click="RemoveColorRange_Click"/>
         </StackPanel>
 
-        <DataGrid x:Name="ColorRangeView" Grid.Row="1" AutoGenerateColumns="False" RowHeight="25" Loaded="ColorRangeView_Loaded">
+        <DataGrid x:Name="ColorRangeView" Grid.Row="1" AutoGenerateColumns="False" RowHeight="25" Loaded="ColorRangeView_Loaded" SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="№" IsReadOnly="True" Binding="{Binding Path=Item1}" Width="50"/>
                 <DataGridTextColumn Header="Название" IsReadOnly="True" Binding="{Binding Path=Item2}" Width="400"/>
@@ -41,5 +41,3 @@
         </StackPanel>
     </Grid>
 </Window>
-
-    

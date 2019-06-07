@@ -115,9 +115,11 @@ namespace ResultViewerWPF.Viewer.Dialogs
             MemberPanelWidthTB.Text = Program.Settings.MemberPanelWidth.ToString();
             MemberPanelHeightTB.Text = Program.Settings.MemberPanelHeight.ToString();
             MemberNameFontSizeTB.Text = Program.Settings.MemberNameFontSize.ToString();
+            MemberPanelStrokeWidthTB.Text = Program.Settings.MemberPanelStrokeWidth.ToString();
 
             ShowMemberPanelColor.Background = new SolidColorBrush(Program.Settings.MemberPanelColor);
             ShowMemberPanelChosenColor.Background = new SolidColorBrush(Program.Settings.MemberPanelChosenColor);
+            ShowMemberPanelStrokeColor.Background = new SolidColorBrush(Program.Settings.MemberPanelStrokeColor);
             ChangeMemberPanelUseSecondShooseColor.IsChecked = Program.Settings.MemberPanelUseSecondChooseColor;
             ShowMemberPanelChosenColor2.Background = new SolidColorBrush(Program.Settings.MemberPanelChosenColor2);
 
@@ -223,6 +225,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
             Program.Settings.MemberPanelHeight = 45;
             Program.Settings.MemberNameFontSize = 20;
             Program.Settings.MemberPanelOpacity = 1;
+            Program.Settings.MemberPanelStrokeWidth = 1;
             Program.Settings.MemberPanelColor = new Color()
             {
                 A = 100,
@@ -237,6 +240,14 @@ namespace ResultViewerWPF.Viewer.Dialogs
                 R = 255,
                 G = 100,
                 B = 100
+            };
+
+            Program.Settings.MemberPanelStrokeColor = new Color()
+            {
+                A = 255,
+                R = 255,
+                G = 255,
+                B = 255
             };
 
             Program.Settings.MemberPanelChosenColor2 = new Color()
@@ -485,7 +496,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
 
                             video.Play();
                         }
-                        catch(Exception exc)
+                        catch(Exception)
                         {
                             MessageBox.Show("Ошибка при загрузке видео", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                             Background = Program.Settings.MainBackground;
@@ -1082,6 +1093,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeMemberPanelColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPanelColor, ShowMemberPanelColor);
         private void ChangeMemberPanelChosenColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPanelChosenColor, ShowMemberPanelChosenColor);
         private void ChangeMemberPanelChosenColor2_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPanelChosenColor2, ShowMemberPanelChosenColor2);
+        private void ChangeMemberPanelStrokeColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPanelStrokeColor, ShowMemberPanelStrokeColor);
         private void ChangeMemberNameFontColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberNameFontColor, ShowMemberNameFontColor);
         private void ChangeMemberPanelFirstPlace_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPanelFirstPlace, ShowMemberPanelFirstPlace);
         private void ChangeMemberPanelSecondPlace_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPanelSecondPlace, ShowMemberPanelSecondPlace);
@@ -1104,6 +1116,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeMemberPanelWidth(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPanelWidth);
         private void ChangeMemberPanelHeight(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPanelHeight);
         private void ChangeMemberNameFontSize(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberNameFontSize);
+        private void ChangeMemberPanelStrokeWidth(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPanelStrokeWidth);
         private void ChangeMemberPointsPanelHeight(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPointsPanelHeight);
         private void ChangeMemberPointsPanelWidth(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPointsPanelWidth);
         private void ChangeMemberPointsFontSize(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPointsFontSize);
@@ -1302,6 +1315,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void NominationWizard_Click(object sender, RoutedEventArgs e)
         {
             NominationsWizard wizard = new NominationsWizard();
+            wizard.ShowDialog();
         }
     }
 }

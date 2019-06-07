@@ -44,7 +44,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
             for (int i = 0; i < Program.Settings.ColorRangeList.Count; i++)
             {
                 ColorRange currentRange = Program.Settings.ColorRangeList.ElementAt(i);
-                transformedColorRange.Add(Tuple.Create(i,
+                transformedColorRange.Add(Tuple.Create(i + 1,
                                                        currentRange.Name,
                                                        currentRange.Count,
                                                        new SolidColorBrush(currentRange.CurrentColor)));
@@ -72,16 +72,23 @@ namespace ResultViewerWPF.Viewer.Dialogs
                 // Обновим список
                 UpdateRangeView();
             }
-            else
-            {
-                MessageBox.Show("Добавление нового объекта было отменено", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-            }
         }
 
         private void EditColorRange_Click(object sender, RoutedEventArgs e)
         {
-            // Получим индекс объекта, который сейчас будет редактироваться
-            int currentItem = (ColorRangeView.SelectedValue as Tuple<int, string, int, SolidColorBrush>).Item1;
+            int currentItem = 0;
+
+            if (ColorRangeView.SelectedValue != null)
+            {
+                // Получим индекс объекта, который сейчас будет редактироваться (из номера объекта)
+                // Вычтем 1, чтобы получить индекс элемента
+                currentItem = (ColorRangeView.SelectedValue as Tuple<int, string, int, SolidColorBrush>).Item1 - 1;
+            }
+            else
+            {
+                MessageBox.Show("Сначала выберете объект для редактирования", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             // Запустим диалог
             EditColorRange rangeData = new EditColorRange(Program.Settings.ColorRangeList.ElementAt(currentItem));
@@ -100,15 +107,26 @@ namespace ResultViewerWPF.Viewer.Dialogs
                 // Обновим список
                 UpdateRangeView();
             }
-            else
-            {
-                MessageBox.Show("Добавление нового объекта было отменено", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-            }
         }
 
         private void RemoveColorRange_Click(object sender, RoutedEventArgs e)
         {
+            int currentItem = 0;
 
+            if (ColorRangeView.SelectedValue != null)
+            {
+                // Получим индекс объекта, который сейчас будет редактироваться
+                currentItem = (ColorRangeView.SelectedValue as Tuple<int, string, int, SolidColorBrush>).Item1 - 1;
+
+                Program.Settings.ColorRangeList.Remove(Program.Settings.ColorRangeList.ElementAt(currentItem));
+
+                // Обновим список
+                UpdateRangeView();
+            }
+            else
+            {
+                MessageBox.Show("Сначала выберете объект для удаления", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void SetDefault_Click(object sender, RoutedEventArgs e)

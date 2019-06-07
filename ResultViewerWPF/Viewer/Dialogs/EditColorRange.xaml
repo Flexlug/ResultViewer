@@ -19,7 +19,7 @@
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="1" VerticalAlignment="Center" Margin="5">
             <TextBlock Text="Количество мест:"/>
-            <TextBox x:Name="RangeCountEdit"/>
+            <TextBox x:Name="RangeCountEdit" PreviewKeyDown="RangeCountEdit_PreviewKeyDown"/>
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="2" Margin="5">
             <TextBlock Text="Цвет:"/>
