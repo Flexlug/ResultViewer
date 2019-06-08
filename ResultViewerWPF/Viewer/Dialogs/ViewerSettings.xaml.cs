@@ -168,6 +168,9 @@ namespace ResultViewerWPF.Viewer.Dialogs
             JuryPanelWidthTB.Text = Program.Settings.JuryPanelWidth.ToString();
             JuryPanelHeightTB.Text = Program.Settings.JuryPanelHeight.ToString();
             JuryFontSizeTB.Text = Program.Settings.JuryFontSize.ToString();
+            JuryPanelStrokeWidthTB.Text = Program.Settings.JuryPanelStrokeWidth.ToString();
+            ChooseJuryFontWeight.SelectedIndex = ConvertFontWeightToIndex(Program.Settings.JuryFontWeight);
+            ShowJuryPanelStrokeColor.Background = new SolidColorBrush(Program.Settings.JuryPanelStrokeColor);
             ShowJuryPanelColor.Background = new SolidColorBrush(Program.Settings.JuryPanelColor);
 
             PointBarFontSizeTB.Text = Program.Settings.PointBarFontSize.ToString();
@@ -370,6 +373,16 @@ namespace ResultViewerWPF.Viewer.Dialogs
             Program.Settings.JuryPanelHeight = 35;
             Program.Settings.JuryPanelOpacity = 1;
             Program.Settings.JuryFontSize = 20;
+            Program.Settings.JuryPanelStrokeWidth = 1;
+            Program.Settings.JuryFontWeight = FontWeights.Thin;
+
+            Program.Settings.JuryPanelStrokeColor = new Color()
+            {
+                A = 100,
+                R = 200,
+                G = 200,
+                B = 200
+            };
 
             Program.Settings.JuryPanelColor = new Color()
             {
@@ -697,7 +710,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
 
                 // Обновим состояние переменных флагов, изменим текст кнопки
                 menuOpened = false;
-                ToggleSettingsButton.Content = "Закрыть";
+                ToggleSettingsButton.Content = "Открыть";
             }
             else
             {
@@ -737,7 +750,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
 
                 // Обновим состояние переменных флагов, изменим текст кнопки
                 menuOpened = true;
-                ToggleSettingsButton.Content = "Открыть";
+                ToggleSettingsButton.Content = "Закрыть";
             }
         }
 
@@ -1106,6 +1119,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeMemberResultFontColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberResultFontColor, ShowMemberResultFontColor);
         private void ChangeMemberResultPanelColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberResultPanelColor, ShowMemberResultPanelColor);
         private void ChangeMemberResultStrokeColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberResultStrokeColor, ShowMemberResultStrokeColor);
+        private void ChangeJuryPanelStrokeColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.JuryPanelStrokeColor, ShowJuryPanelStrokeColor);
         private void ChangeJuryPanelColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.JuryPanelColor, ShowJuryPanelColor);
         private void ChangeBackgroundColor1_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.BackgroundColor1, ShowBackgroundColor1);
         private void ChangeBackgroundColor2_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.BackgroundColor2, ShowBackgroundColor2);
@@ -1130,6 +1144,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeJuryPanelWidth(object sender, RoutedEventArgs e) => UpdateValueFromTB(JuryPanelWidthTB, ref Program.Settings.JuryPanelWidth);
         private void ChangeJuryPanelHeight(object sender, RoutedEventArgs e) => UpdateValueFromTB(JuryPanelHeightTB, ref Program.Settings.JuryPanelHeight);
         private void ChangeJuryFontSize(object sender, RoutedEventArgs e) => UpdateValueFromTB(JuryFontSizeTB, ref Program.Settings.JuryFontSize);
+        private void ChangeJuryPanelStrokeWidth(object sender, RoutedEventArgs e) => UpdateValueFromTB(JuryPanelStrokeWidthTB, ref Program.Settings.JuryPanelStrokeWidth);
         private void ChangePointBarFontSize(object sender, RoutedEventArgs e) => UpdateValueFromTB(PointBarFontSizeTB, ref Program.Settings.PointBarFontSize);
         private void ChangeTopJuryInterval(object sender, RoutedEventArgs e) => UpdateValueFromTB(TopJuryIntervalTB, ref Program.Settings.TopJuryInterval);
         private void ChangeJuryMemberOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(JuryMemberOffsetTB, ref Program.Settings.JuryMemberOffset);
@@ -1159,6 +1174,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeLowerPhrase(object sender, RoutedEventArgs e) => Program.Settings.LowerPhrase = new TextRange((sender as RichTextBox).Document.ContentStart, (sender as RichTextBox).Document.ContentEnd).Text ?? Program.Settings.LowerPhrase;
 
         private void ChooseMemberNameFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.MemberNameFontWeight = ConvertIndexToFontWeight(ChooseMemberNameFontWeight.SelectedIndex);
+        private void ChooseJuryFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.JuryFontWeight = ConvertIndexToFontWeight(ChooseJuryFontWeight.SelectedIndex);
         private void ChooseMemberPlaceFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.MemberPlaceFontWeight = ConvertIndexToFontWeight(ChooseMemberPlaceFontWeight.SelectedIndex);
         private void ChooseMemberResultFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.MemberResultFontWeight = ConvertIndexToFontWeight((sender as ComboBox).SelectedIndex);
         private void ChooseLowerPhraseFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.LowerPhraseFontWeight = ConvertIndexToFontWeight((sender as ComboBox).SelectedIndex);
@@ -1220,22 +1236,6 @@ namespace ResultViewerWPF.Viewer.Dialogs
                     break;
                 case 2:
                     Program.Settings.MemberPointsMode = Program.Settings.PointsMode.Descending;
-                    break;
-            }
-        }
-        
-        private void ChooseShowMemberResultModee_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            switch ((sender as ComboBox).SelectedIndex)
-            {
-                case 0:
-                    Program.Settings.ShowMemberResultMode = Program.Settings.ResultShowMode.AlwaysVisible;
-                    break;
-                case 1:
-                    Program.Settings.ShowMemberResultMode = Program.Settings.ResultShowMode.Visible;
-                    break;
-                case 2:
-                    Program.Settings.ShowMemberResultMode = Program.Settings.ResultShowMode.Hidden;
                     break;
             }
         }

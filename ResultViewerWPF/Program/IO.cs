@@ -230,12 +230,20 @@ namespace ResultViewerWPF.Program
             settings.Add(new XElement("JuryPanelWidth", new XAttribute("Value", Program.Settings.JuryPanelWidth)));
             settings.Add(new XElement("JuryPanelHeight", new XAttribute("Value", Program.Settings.JuryPanelHeight)));
             settings.Add(new XElement("JuryPanelOpacity", new XAttribute("Value", Program.Settings.JuryPanelOpacity)));
+            settings.Add(new XElement("JuryFontWeight", new XAttribute("Value", ViewerSettings.ConvertFontWeightToIndex(Program.Settings.JuryFontWeight))));
+            settings.Add(new XElement("JuryPanelStrokeWidth", new XAttribute("Value", Program.Settings.JuryPanelStrokeWidth)));
+
             settings.Add(new XElement("JuryFontSize", new XAttribute("Value", Program.Settings.JuryFontSize)));
 
             settings.Add(new XElement("JuryPanelColor", new XAttribute("R", Program.Settings.JuryPanelColor.R),
                                                         new XAttribute("G", Program.Settings.JuryPanelColor.G),
                                                         new XAttribute("B", Program.Settings.JuryPanelColor.B),
                                                         new XAttribute("A", Program.Settings.JuryPanelColor.A)));
+
+            settings.Add(new XElement("JuryPanelStrokeColor", new XAttribute("R", Program.Settings.JuryPanelStrokeColor.R),
+                                                        new XAttribute("G", Program.Settings.JuryPanelStrokeColor.G),
+                                                        new XAttribute("B", Program.Settings.JuryPanelStrokeColor.B),
+                                                        new XAttribute("A", Program.Settings.JuryPanelStrokeColor.A)));
 
             settings.Add(new XElement("PointBarFontSize", new XAttribute("Value", Program.Settings.PointBarFontSize)));
             settings.Add(new XElement("PointBarPanelOpacity", new XAttribute("Value", Program.Settings.PointBarPanelOpacity)));
@@ -758,12 +766,21 @@ namespace ResultViewerWPF.Program
 
                     if (tryGetSingleNode(settings, "JuryPanelOpacity"))
                         Program.Settings.JuryPanelOpacity = getDouble("Value");
+                    
+                    if (tryGetSingleNode(settings, "JuryFontWeight"))
+                        Program.Settings.JuryFontWeight = ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+
+                    if (tryGetSingleNode(settings, "JuryPanelStrokeWidth"))
+                        Program.Settings.JuryPanelStrokeWidth = getDouble("Value");
 
                     if (tryGetSingleNode(settings, "JuryFontSize"))
                         Program.Settings.JuryFontSize = getDouble("Value");
 
                     if (tryGetSingleNode(settings, "JuryPanelColor"))
                         Program.Settings.JuryPanelColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+
+                    if (tryGetSingleNode(settings, "JuryPanelStrokeColor"))
+                        Program.Settings.JuryPanelStrokeColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
 
                     if (tryGetSingleNode(settings, "PointBarFontSize"))
                         Program.Settings.PointBarFontSize = getDouble("Value");

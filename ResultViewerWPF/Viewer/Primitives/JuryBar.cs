@@ -44,20 +44,68 @@ namespace ResultViewerWPF.Viewer.Primitives
         /// <param name="name"></param>
         public JuryBar(Canvas parentCanvas, string name)
         {
-            // Инициализируем графическую составляющую
-            mainPanel = new Grid()
+            //// Инициализируем графическую составляющую
+            //mainPanel = new Grid()
+            //{
+            //    // Ширина
+            //    MinWidth = Program.Settings.JuryPanelWidth,
+            //    // Высотаэ
+            //    MinHeight = Program.Settings.JuryPanelHeight,
+            //    // Цвет фона панели
+            //    Background = new SolidColorBrush(Program.Settings.JuryPanelColor),
+            //    // Цвет контура панели
+
+            //    // Горизонтальное центрирование
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    // Вертикальное центрирование
+            //    VerticalAlignment = VerticalAlignment.Center,
+
+            //};
+
+            //// Ставим имя
+            //Name = name;
+
+            //// Имя жюри
+            //juryName = new TextBlock()
+            //{
+            //    // Текст
+            //    Text = Name,
+            //    // Положение текста
+            //    TextAlignment = TextAlignment.Center,
+            //    // Размер шрифта
+            //    FontSize = Program.Settings.JuryFontSize,
+            //    // Стиль текста
+            //    FontWeight = Program.Settings.JuryFontWeight,
+            //    // Максимально допустимая ширина TextBox-a
+            //    MaxWidth = Program.Settings.JuryPanelWidth,
+            //    // Максмально допустимая высота TextBox-а
+            //    MaxHeight = Program.Settings.JuryPanelHeight,
+            //    // Горизонтальное центрирование
+            //    HorizontalAlignment = HorizontalAlignment.Center,
+            //    // Вертикальное центрирование
+            //    VerticalAlignment = VerticalAlignment.Center,
+            //    // Для построчного переноса текста
+            //    TextWrapping = TextWrapping.Wrap
+            //};
+
+            // Инициализируем главную родительскую панель
+            mainPanel = new Grid();
+
+            // Фон панели
+            Rectangle mainRectangle = new Rectangle()
             {
-                // Ширина
-                MinWidth = Program.Settings.JuryPanelWidth,
-                // Высотаэ
-                MinHeight = Program.Settings.JuryPanelHeight,
+                // Ширина панели
+                Width = Program.Settings.JuryPanelWidth,
+                // Высота панели
+                Height = Program.Settings.JuryPanelHeight,
                 // Цвет фона панели
-                Background = new SolidColorBrush(Program.Settings.JuryPanelColor),
-                // Горизонтальное центрирование
-                HorizontalAlignment = HorizontalAlignment.Center,
-                // Вертикальное центрирование
+                Fill = new SolidColorBrush(Program.Settings.JuryPanelColor),
+                // Вертикальное центрирование содержимого
                 VerticalAlignment = VerticalAlignment.Center,
-                
+                // Цвет контура панели
+                Stroke = new SolidColorBrush(Program.Settings.JuryPanelStrokeColor),
+                // Ширина контура панели
+                StrokeThickness = Program.Settings.JuryPanelStrokeWidth
             };
 
             // Ставим имя
@@ -73,11 +121,7 @@ namespace ResultViewerWPF.Viewer.Primitives
                 // Размер шрифта
                 FontSize = Program.Settings.JuryFontSize,
                 // Стиль текста
-                FontWeight = FontWeights.Thin,
-                // Максимально допустимая ширина TextBox-a
-                MaxWidth = Program.Settings.JuryPanelWidth,
-                // Максмально допустимая высота TextBox-а
-                MaxHeight = Program.Settings.JuryPanelHeight,
+                FontWeight = Program.Settings.JuryFontWeight,
                 // Горизонтальное центрирование
                 HorizontalAlignment = HorizontalAlignment.Center,
                 // Вертикальное центрирование
@@ -86,7 +130,10 @@ namespace ResultViewerWPF.Viewer.Primitives
                 TextWrapping = TextWrapping.Wrap
             };
 
-            // Расставляем элементы
+            //// Расставляем элементы
+            //mainPanel.Children.Add(juryName);
+
+            mainPanel.Children.Add(mainRectangle);
             mainPanel.Children.Add(juryName);
 
             // Инициализируем TranslateGroup
@@ -103,7 +150,7 @@ namespace ResultViewerWPF.Viewer.Primitives
             ParentCanvas = parentCanvas;
             ParentCanvas.Children.Add(mainPanel);
 
-            // Выставляем уоординаты. Левый нижний угол. Отныне работаем с центром элемента
+            // Выставляем координаты. Левый нижний угол. Отныне работаем с центром элемента
             Canvas.SetLeft(mainPanel, -(Program.Settings.JuryPanelWidth / 2));
             Canvas.SetTop(mainPanel, -(Program.Settings.JuryPanelHeight / 2));
             mainPanel.RenderTransformOrigin = new Point(0.5, 0.5);

@@ -405,12 +405,7 @@ namespace ResultViewerWPF.Program
         public static double JuryPanelOpacity = 1;
 
         /// <summary>
-        /// Размер шрифта для панели жюри
-        /// </summary>
-        public static double JuryFontSize = 20;
-        
-        /// <summary>
-        /// Цвет панели участника
+        /// Цвет панели жюри
         /// </summary>
         public static Color JuryPanelColor = new Color()
         {
@@ -419,6 +414,33 @@ namespace ResultViewerWPF.Program
             G = 200,
             B = 200
         };
+
+        /// <summary>
+        /// Тип шрифта панели жюри
+        /// </summary>
+        public static FontWeight JuryFontWeight = FontWeights.Thin;
+
+        /// <summary>
+        /// Ширина контура для панели жюри
+        /// </summary>
+        public static double JuryPanelStrokeWidth = 1;
+
+        /// <summary>
+        /// Цвет контура панели жюри
+        /// </summary>
+        public static Color JuryPanelStrokeColor = new Color()
+        {
+            A = 100,
+            R = 200,
+            G = 200,
+            B = 200
+        };
+
+        /// <summary>
+        /// Размер шрифта для панели жюри
+        /// </summary>
+        public static double JuryFontSize = 20;
+
         #endregion
 
         #region Панель баллов

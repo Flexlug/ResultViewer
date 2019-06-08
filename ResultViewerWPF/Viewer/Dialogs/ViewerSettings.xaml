@@ -9,9 +9,9 @@
     <Canvas x:Name="MainCanvas" Background="Black" Margin="-2,0,2,0">
         <Button x:Name="ToggleSettingsButton" Canvas.Top="5" Canvas.Left="5" Width="80" Content="Открыть" Click="ToggleSettingsMenu" Panel.ZIndex="10001"/>
         <Button x:Name="ApplySettingsButton" Canvas.Left="5" Width="80" Content="Обновить" Canvas.Top="35" Panel.ZIndex="10002" Click="ApplySettingsButton_Click"/>
-<!--        <ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="{Binding ElementName=MainCanvas, Path=ActualHeight}" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">-->
-            <ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="5000" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">
-            <StackPanel Width="200" Margin="5" FlowDirection="LeftToRight">                
+        <ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="{Binding ElementName=MainCanvas, Path=ActualHeight}" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">
+            <!--<ScrollViewer x:Name="SettingsPanel" Width="Auto" HorizontalAlignment="Left" FlowDirection="RightToLeft" Height="5000" Canvas.Left="-230" Background="LightGray" Panel.ZIndex="10000">-->
+                <StackPanel Width="200" Margin="5" FlowDirection="LeftToRight">                
                 <GroupBox Header="Сброс" Margin="5">
                     <StackPanel Margin="5">
                         <Button Content="Сбросить настройки" ToolTip="Сбросить настройки до стандартных значений" Click="SetDefaultSettings"/>
@@ -445,25 +445,62 @@
 
                                 <Label Content="Высота панели" ToolTip="Высота панели жюри"/>
                                 <TextBox x:Name="JuryPanelHeightTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeJuryPanelHeight"/>
+                                
+                                <Label Content="Ширина контура" ToolTip="Ширина контура вокруг имени жюри"/>                                
+                                <TextBox x:Name="JuryPanelStrokeWidthTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeJuryPanelStrokeWidth"/>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет заднего фона для панели жюри" Margin="0, 0, 0, -8"/>
+                                    <Canvas x:Name="ShowJuryPanelColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
+                                    <Button x:Name="ChangeJuryPanelColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangeJuryPanelColor_Click"/>
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет контура" ToolTip="Цвет контура вокруг имени жюри" Margin="0, 0, 0, -8"/>
+                                    <Canvas x:Name="ShowJuryPanelStrokeColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
+                                    <Button x:Name="ChangeJuryPanelStrokeColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangeJuryPanelStrokeColor_Click"/>
+                                </Grid>
 
                                 <GroupBox Header="Шрифт">
                                     <StackPanel>
                                         <Label Content="Размер шрифта" ToolTip="Размер шрифта для панели жюри"/>
                                         <TextBox x:Name="JuryFontSizeTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeJuryFontSize"/>
 
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет заднего фона для панели жюри" Margin="0, 0, 0, -8"/>
-                                            <Canvas x:Name="ShowJuryPanelColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
-                                            <Button x:Name="ChangeJuryPanelColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangeJuryPanelColor_Click"/>
-                                        </Grid>
+                                        <Label Content="Тип шрифта" ToolTip="Тип шрифта для панели с жюри"/>
+                                        <ComboBox x:Name="ChooseJuryFontWeight" SelectionChanged="ChooseJuryFontWeight_SelectionChanged">
+                                            <ComboBoxItem Content="Black"/>
+                                            <ComboBoxItem Content="Bold"/>
+                                            <ComboBoxItem Content="DemiBold"/>
+                                            <ComboBoxItem Content="ExtraBlack"/>
+                                            <ComboBoxItem Content="ExtraBold"/>
+                                            <ComboBoxItem Content="ExtraLight"/>
+                                            <ComboBoxItem Content="Heavy"/>
+                                            <ComboBoxItem Content="Light"/>
+                                            <ComboBoxItem Content="Medium"/>
+                                            <ComboBoxItem Content="Normal"/>
+                                            <ComboBoxItem Content="Regular"/>
+                                            <ComboBoxItem Content="SemiBold"/>
+                                            <ComboBoxItem Content="Thin"/>
+                                            <ComboBoxItem Content="UltraBlack"/>
+                                            <ComboBoxItem Content="UltraBold"/>
+                                            <ComboBoxItem Content="UltraLight"/>
+                                        </ComboBox>
                                     </StackPanel>
                                 </GroupBox>
                             </StackPanel>
@@ -483,7 +520,7 @@
                                     <TextBox x:Name="LowerPhraseOffsetTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeLowerPhraseOffset"/>
                                     <Label Content="Размер шрифта" ToolTip="Размер шрифта для панели с поясняющей фразой"/>
                                     <TextBox x:Name="LowerPhraseFontHeightTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeLowerPhraseFontHeight"/>
-
+                                    
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -496,7 +533,7 @@
                                         <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет заднего фона для панели с предварительными результатами" Margin="0, 0, 0, -8"/>
                                         <Canvas x:Name="ShowLowerPanelFontColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
                                         <Button x:Name="ChangeLowerPanelFontColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangeLowerPanelFontColor_Click"/>
-                                    </Grid>
+                                    </Grid>                                    
 
                                     <Label Content="Тип шрифта" ToolTip="Тип шрифта для нижней фразы"/>
                                     <ComboBox x:Name="ChooseLowerPhraseFontWeight" SelectionChanged="ChooseLowerPhraseFontWeight_SelectionChanged">
