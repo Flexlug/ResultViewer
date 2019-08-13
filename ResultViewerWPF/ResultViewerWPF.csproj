@@ -96,6 +96,7 @@
     </ApplicationDefinition>
     <Compile Include="Program\Constants.cs" />
     <Compile Include="Classes\Logic.cs" />
+    <Compile Include="Program\Warnings.cs" />
     <Compile Include="Viewer\Dialogs\ColorRangesWizard.xaml.cs">
       <DependentUpon>ColorRangesWizard.xaml</DependentUpon>
     </Compile>
@@ -119,6 +120,9 @@
     <Compile Include="Program\Settings.cs" />
     <Compile Include="Viewer\GraphicsEngine.cs" />
     <Compile Include="Viewer\Primitives\Bar.cs" />
+    <Compile Include="Viewer\Primitives\ColumnTextBar\PlaceColumnTextBar.cs" />
+    <Compile Include="Viewer\Primitives\ColumnTextBar\PointColumnTextBar.cs" />
+    <Compile Include="Viewer\Primitives\ColumnTextBar\ResultColumnTextBar.cs" />
     <Compile Include="Viewer\Primitives\JuryBar.cs" />
     <Compile Include="Viewer\Primitives\MemberBar.cs" />
     <Compile Include="Viewer\Primitives\PointBar.cs" />

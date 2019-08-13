@@ -294,6 +294,61 @@ namespace ResultViewerWPF.Program
             settings.Add(new XElement("LowerPhraseShowMode", new XAttribute("Value", (int)Program.Settings.LowerPhraseShowMode)));
             settings.Add(new XElement("LowerPhrase", new XAttribute("Value", Program.Settings.LowerPhrase)));
 
+            settings.Add(new XElement("UseColorRanges", new XAttribute("Value", Program.Settings.UseColorRanges)));
+
+            settings.Add(new XElement("ColorConfiguration",
+                new XAttribute("Count", Program.Settings.ColorRangeList.Count),
+                    Program.Settings.ColorRangeList
+                        .Select(x => 
+                            new XElement("ColorRange",
+                                new XAttribute("Name", ((Viewer.ColorRange)x).Name),
+                                new XAttribute("A", ((Viewer.ColorRange)x).CurrentColor.A),
+                                new XAttribute("R", ((Viewer.ColorRange)x).CurrentColor.R),
+                                new XAttribute("G", ((Viewer.ColorRange)x).CurrentColor.G),
+                                new XAttribute("B", ((Viewer.ColorRange)x).CurrentColor.B),
+                                new XAttribute("Count", ((Viewer.ColorRange)x).Count)
+                                ))));
+
+            settings.Add(new XElement("PointsColumnPhraseShowMode", new XAttribute("Value", (int)Program.Settings.PointsColumnPhraseShowMode)));
+            settings.Add(new XElement("PointsColumnPhraseIsUnderlined", new XAttribute("Value", Program.Settings.PointsColumnPhraseIsUnderlined)));
+            settings.Add(new XElement("PointsColumnPhraseFontWeight", new XAttribute("Value", ViewerSettings.ConvertFontWeightToIndex(Program.Settings.PointsColumnPhraseFontWeight))));
+            settings.Add(new XElement("PointsColumnPhraseFontColor", new XAttribute("R", Program.Settings.PointsColumnPhraseFontColor.R),
+                                                                     new XAttribute("G", Program.Settings.PointsColumnPhraseFontColor.G),
+                                                                     new XAttribute("B", Program.Settings.PointsColumnPhraseFontColor.B),
+                                                                     new XAttribute("A", Program.Settings.PointsColumnPhraseFontColor.A)));
+            settings.Add(new XElement("PointsColumnPhraseFontSize", new XAttribute("Value", Program.Settings.PointsColumnPhraseFontSize)));
+            settings.Add(new XElement("PointsColumnPhrase", new XAttribute("Value", Program.Settings.PointsColumnPhrase)));
+            settings.Add(new XElement("PointsColumnPhraseXOffset", new XAttribute("Value", Program.Settings.PointsColumnPhraseXOffset)));
+            settings.Add(new XElement("PointsColumnPhraseYOffset", new XAttribute("Value", Program.Settings.PointsColumnPhraseYOffset)));
+
+
+
+            settings.Add(new XElement("ResultColumnPhraseShowMode", new XAttribute("Value", (int)Program.Settings.ResultColumnPhraseShowMode)));
+            settings.Add(new XElement("ResultColumnPhraseIsUnderlined", new XAttribute("Value", Program.Settings.ResultColumnPhraseIsUnderlined)));
+            settings.Add(new XElement("ResultColumnPhraseFontWeight", new XAttribute("Value", ViewerSettings.ConvertFontWeightToIndex(Program.Settings.ResultColumnPhraseFontWeight))));
+            settings.Add(new XElement("ResultColumnPhraseFontColor", new XAttribute("R", Program.Settings.ResultColumnPhraseFontColor.R),
+                                                                     new XAttribute("G", Program.Settings.ResultColumnPhraseFontColor.G),
+                                                                     new XAttribute("B", Program.Settings.ResultColumnPhraseFontColor.B),
+                                                                     new XAttribute("A", Program.Settings.ResultColumnPhraseFontColor.A)));
+            settings.Add(new XElement("ResultColumnPhraseFontSize", new XAttribute("Value", Program.Settings.ResultColumnPhraseFontSize)));
+            settings.Add(new XElement("ResultColumnPhrase", new XAttribute("Value", Program.Settings.ResultColumnPhrase)));
+            settings.Add(new XElement("ResultColumnPhraseXOffset", new XAttribute("Value", Program.Settings.ResultColumnPhraseXOffset)));
+            settings.Add(new XElement("ResultColumnPhraseYOffset", new XAttribute("Value", Program.Settings.ResultColumnPhraseYOffset)));
+
+
+            
+            settings.Add(new XElement("PlaceColumnPhraseShowMode", new XAttribute("Value", (int)Program.Settings.PlaceColumnPhraseShowMode)));
+            settings.Add(new XElement("PlaceColumnPhraseIsUnderlined", new XAttribute("Value", Program.Settings.PlaceColumnPhraseIsUnderlined)));
+            settings.Add(new XElement("PlaceColumnPhraseFontWeight", new XAttribute("Value", ViewerSettings.ConvertFontWeightToIndex(Program.Settings.PlaceColumnPhraseFontWeight))));
+            settings.Add(new XElement("PlaceColumnPhraseFontColor", new XAttribute("R", Program.Settings.PlaceColumnPhraseFontColor.R),
+                                                                     new XAttribute("G", Program.Settings.PlaceColumnPhraseFontColor.G),
+                                                                     new XAttribute("B", Program.Settings.PlaceColumnPhraseFontColor.B),
+                                                                     new XAttribute("A", Program.Settings.PlaceColumnPhraseFontColor.A)));
+            settings.Add(new XElement("PlaceColumnPhraseFontSize", new XAttribute("Value", Program.Settings.PlaceColumnPhraseFontSize)));
+            settings.Add(new XElement("PlaceColumnPhrase", new XAttribute("Value", Program.Settings.PlaceColumnPhrase)));
+            settings.Add(new XElement("PlaceColumnPhraseXOffset", new XAttribute("Value", Program.Settings.PlaceColumnPhraseXOffset)));
+            settings.Add(new XElement("PlaceColumnPhraseYOffset", new XAttribute("Value", Program.Settings.PlaceColumnPhraseYOffset)));
+
             #endregion
 
             data.Add(jurys);        //<
@@ -458,7 +513,7 @@ namespace ResultViewerWPF.Program
                 List<string> memberList = appLogic.GetMembersList();
 
                 // Заранее объявим элемент, в котором будет временно храниться считываемый нод, чтобы можно было вычислить, где произошла ошибка
-                XmlNode tempElement = null;
+                XmlNode readingElement = null;
 
                 try         //Попытка загрузить данные
                 {
@@ -500,10 +555,10 @@ namespace ResultViewerWPF.Program
                         }
                     }
 
-                    #region Get OldSettings
+                    #region IO functions
 
                     XmlNode oldSettings = xRoot.SelectSingleNode("Old_Settings");
-                    
+
                     int tempIntVar;
                     double tempDoubleVar;
                     byte tempByteVar;
@@ -511,7 +566,7 @@ namespace ResultViewerWPF.Program
 
                     Func<string, int> getInt = (name) =>
                     {
-                        if (int.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempIntVar))
+                        if (int.TryParse(readingElement.Attributes.GetNamedItem(name).Value, out tempIntVar))
                             return tempIntVar;
                         else
                             throw new FormatException("Не получилось сконвертировать данный элемент в тип int");
@@ -519,12 +574,12 @@ namespace ResultViewerWPF.Program
 
                     Func<string, string> getStr = (name) =>
                     {
-                        return tempElement.Attributes.GetNamedItem(name).Value;
+                        return readingElement.Attributes.GetNamedItem(name).Value;
                     };
 
                     Func<string, double> getDouble = (name) =>
                     {
-                        if (double.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempDoubleVar))
+                        if (double.TryParse(readingElement.Attributes.GetNamedItem(name).Value, out tempDoubleVar))
                             return tempDoubleVar;
                         else
                             throw new FormatException("Не получилось сконвертировать данный элемент в тип double");
@@ -532,7 +587,7 @@ namespace ResultViewerWPF.Program
 
                     Func<string, byte> getByte = (name) =>
                     {
-                        if (byte.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempByteVar))
+                        if (byte.TryParse(readingElement.Attributes.GetNamedItem(name).Value, out tempByteVar))
                             return tempByteVar;
                         else
                             throw new FormatException("Не получилось сконвертировать данный элемент в тип byte");
@@ -540,7 +595,7 @@ namespace ResultViewerWPF.Program
 
                     Func<string, bool> getBool = (name) =>
                     {
-                        if (bool.TryParse(tempElement.Attributes.GetNamedItem(name).Value, out tempBoolVar))
+                        if (bool.TryParse(readingElement.Attributes.GetNamedItem(name).Value, out tempBoolVar))
                             return tempBoolVar;
                         else
                             throw new FormatException("Не получилось сконвертировать данный элемент в тип bool");
@@ -552,7 +607,7 @@ namespace ResultViewerWPF.Program
                     {
                         try
                         {
-                            tempElement = parentNode.SelectSingleNode(nodeName) ?? throw new NullReferenceException();                            
+                            readingElement = parentNode.SelectSingleNode(nodeName) ?? throw new NullReferenceException();
                             return true;
                         }
                         catch (Exception)
@@ -562,6 +617,9 @@ namespace ResultViewerWPF.Program
                         }
                     };
 
+                    #endregion
+
+                    #region Get OldSettings
 
                     if (tryGetSingleNode(oldSettings, "ContBarColor"))
                         Program.Settings.OldSettings.ContBarColor = Color.FromArgb(getInt("R"), getInt("G"), getInt("B"), getInt("A"));
@@ -874,6 +932,99 @@ namespace ResultViewerWPF.Program
 
                     if (tryGetSingleNode(settings, "LowerPhrase"))
                         Program.Settings.LowerPhrase = getStr("Value");
+
+                    if (tryGetSingleNode(settings, "UseColorRanges"))
+                        Program.Settings.UseColorRanges = getBool("Value");
+
+                    if (tryGetSingleNode(settings, "ColorConfiguration"))
+                    {
+                        Program.Settings.ColorRangeList = new LinkedList<Viewer.ColorRange>();
+
+                        // Сохраняем ссылку на общий список всех настроек цветов
+                        XmlNode loadingRangeList = readingElement;
+                        foreach (XmlNode rangeColor in loadingRangeList)
+                        {
+                            readingElement = rangeColor;
+                            Viewer.ColorRange loadingRange = new Viewer.ColorRange(getStr("Name"), 
+                                                                                   getInt("Count"),
+                                                                                   System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B")));
+
+                            Program.Settings.ColorRangeList.AddLast(loadingRange);
+                        }
+                    }
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhraseShowMode"))
+                        Program.Settings.PointsColumnPhraseShowMode = (Program.Settings.PhraseShowMode)getInt("Value");
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhraseIsUnderlined"))
+                        Program.Settings.PointsColumnPhraseIsUnderlined = getBool("Value");
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhraseFontWeight"))
+                        Program.Settings.PointsColumnPhraseFontWeight = ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhraseFontColor"))
+                        Program.Settings.PointsColumnPhraseFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhraseFontSize"))
+                        Program.Settings.PointsColumnPhraseFontSize = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhrase"))
+                        Program.Settings.PointsColumnPhrase = getStr("Value");
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhraseXOffset"))
+                        Program.Settings.PointsColumnPhraseXOffset = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "PointsColumnPhraseYOffset"))
+                        Program.Settings.PointsColumnPhraseYOffset = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhraseShowMode"))
+                        Program.Settings.ResultColumnPhraseShowMode = (Program.Settings.PhraseShowMode)getInt("Value");
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhraseIsUnderlined"))
+                        Program.Settings.ResultColumnPhraseIsUnderlined = getBool("Value");
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhraseFontWeight"))
+                        Program.Settings.ResultColumnPhraseFontWeight = ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhraseFontColor"))
+                        Program.Settings.ResultColumnPhraseFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhraseFontSize"))
+                        Program.Settings.ResultColumnPhraseFontSize = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhrase"))
+                        Program.Settings.ResultColumnPhrase = getStr("Value");
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhraseXOffset"))
+                        Program.Settings.ResultColumnPhraseXOffset = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "ResultColumnPhraseYOffset"))
+                        Program.Settings.ResultColumnPhraseYOffset = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhraseShowMode"))
+                        Program.Settings.PlaceColumnPhraseShowMode = (Program.Settings.PhraseShowMode)getInt("Value");
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhraseIsUnderlined"))
+                        Program.Settings.PlaceColumnPhraseIsUnderlined = getBool("Value");
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhraseFontWeight"))
+                        Program.Settings.PlaceColumnPhraseFontWeight = ViewerSettings.ConvertIndexToFontWeight(getInt("Value"));
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhraseFontColor"))
+                        Program.Settings.PlaceColumnPhraseFontColor = System.Windows.Media.Color.FromArgb(getByte("A"), getByte("R"), getByte("G"), getByte("B"));
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhraseFontSize"))
+                        Program.Settings.PlaceColumnPhraseFontSize = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhrase"))
+                        Program.Settings.PlaceColumnPhrase = getStr("Value");
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhraseXOffset"))
+                        Program.Settings.PlaceColumnPhraseXOffset = getDouble("Value");
+
+                    if (tryGetSingleNode(settings, "PlaceColumnPhraseYOffset"))
+                        Program.Settings.PlaceColumnPhraseYOffset = getDouble("Value");
+                    
                     #endregion
 
                     if (errorList.Length != 0)
@@ -881,11 +1032,11 @@ namespace ResultViewerWPF.Program
                 }
                 catch (FormatException fx)
                 {
-                    throw new FormatException($"Ошибка во время преобразования типов в элементе: {tempElement.InnerText}\n\nException data: {fx.Data}\nStackTrace: {fx.StackTrace}");
+                    throw new FormatException($"Ошибка во время преобразования типов в элементе: {readingElement.InnerText}\n\nException data: {fx.Data}\nStackTrace: {fx.StackTrace}");
                 }
                 catch (Exception x)
                 {
-                    throw new Exception($"Неожиданная ошибка во время чтения файла\n\nСчитываемый элемент: {tempElement.InnerText}\nException data: {x.Data}\nStackTrace: {x.StackTrace}");
+                    throw new Exception($"Неожиданная ошибка во время чтения файла\n\nСчитываемый элемент: {readingElement.InnerText}\nException data: {x.Data}\nStackTrace: {x.StackTrace}");
                 }
             }
         }

@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using ResultViewerWPF.Viewer.Primitives;
+using ResultViewerWPF.Viewer.Primitives.ColumnTextBar;
 
 namespace ResultViewerWPF.Viewer.Dialogs
 {
@@ -24,6 +25,12 @@ namespace ResultViewerWPF.Viewer.Dialogs
     /// </summary>
     public partial class ViewerSettings : Window
     {
+        /// <summary>
+        /// Указывает, можно ли использовать цветовые диапазоны
+        /// Их нельзя использовать, если цветовые диапазоны накладываются на места, в которых одновременно несколько человек
+        /// </summary>
+        public bool CanUseColorRanges = true;
+
         #region Графика
 
         /// <summary>
@@ -35,6 +42,21 @@ namespace ResultViewerWPF.Viewer.Dialogs
         /// Коллекция с панелями жюри, которые сейчас прогружены в окне
         /// </summary>
         List<JuryBar> juryPanels = new List<JuryBar>();
+
+        /// <summary>
+        /// Надпись над колонкой с баллами
+        /// </summary>
+        PointColumnTextBar pointColumnPhrase = null;
+
+        /// <summary>
+        /// Надпись над колонкой с результатами
+        /// </summary>
+        ResultColumnTextBar resultColumnPhrase = null;
+
+        /// <summary>
+        /// Надпись над колонкой с местами в топе
+        /// </summary>
+        PlaceColumnTextBar placeColumnPhrase = null;
 
         /// <summary>
         /// Координатная система
@@ -100,6 +122,12 @@ namespace ResultViewerWPF.Viewer.Dialogs
             {
                 userLogic = innerLogic;
                 CurrentLogicType = LogicType.User;
+
+                if (userLogic.PointsCollisionsExists())
+                {
+                    ColorConfigurationButton.IsEnabled = false;
+                    CanUseColorRanges = false;
+                }
             }
             else
                 CurrentLogicType = LogicType.Test;
@@ -211,7 +239,37 @@ namespace ResultViewerWPF.Viewer.Dialogs
             BackgroundAnimPeriodTB.Text = Program.Settings.BackgroundAnimPeriod.TotalMilliseconds.ToString();
             BackgroundAppearTimeTB.Text = Program.Settings.BackgroundAppearTime.TotalMilliseconds.ToString();
 
+            UseColorRanges.IsChecked = Program.Settings.UseColorRanges;
+
+            ChoosePointsColumnPhraseShowMode.SelectedIndex = (int)Program.Settings.PointsColumnPhraseShowMode;
+            PointsColumnPhraseIsUnderlined.IsChecked = Program.Settings.PointsColumnPhraseIsUnderlined;
+            ChoosePointsColumnPhraseFontWeight.SelectedIndex = ConvertFontWeightToIndex(Program.Settings.PointsColumnPhraseFontWeight);
+            ShowPointsColumnPhraseFontColor.Background = new SolidColorBrush(Program.Settings.PointsColumnPhraseFontColor);
+            PointsColumnPhraseFontSizeTB.Text = Program.Settings.PointsColumnPhraseFontSize.ToString();
+            PointsColumnPhraseTB.Text = Program.Settings.PointsColumnPhrase;
+            PointsColumnPhraseXOffsetTB.Text = Program.Settings.PointsColumnPhraseXOffset.ToString();
+            PointsColumnPhraseYOffsetTB.Text = Program.Settings.PointsColumnPhraseYOffset.ToString();
+
+            ChooseResultColumnPhraseShowMode.SelectedIndex = (int)Program.Settings.ResultColumnPhraseShowMode;
+            ResultColumnPhraseIsUnderlined.IsChecked = Program.Settings.ResultColumnPhraseIsUnderlined;
+            ChooseResultColumnPhraseFontWeight.SelectedIndex = ConvertFontWeightToIndex(Program.Settings.ResultColumnPhraseFontWeight);
+            ShowResultColumnPhraseFontColor.Background = new SolidColorBrush(Program.Settings.ResultColumnPhraseFontColor);
+            ResultColumnPhraseFontSizeTB.Text = Program.Settings.ResultColumnPhraseFontSize.ToString();
+            ResultColumnPhraseTB.Text = Program.Settings.ResultColumnPhrase;
+            ResultColumnPhraseXOffsetTB.Text = Program.Settings.ResultColumnPhraseXOffset.ToString();
+            ResultColumnPhraseYOffsetTB.Text = Program.Settings.ResultColumnPhraseYOffset.ToString();
+
+            ChoosePlaceColumnPhraseShowMode.SelectedIndex = (int)Program.Settings.PlaceColumnPhraseShowMode;
+            PlaceColumnPhraseIsUnderlined.IsChecked = Program.Settings.PlaceColumnPhraseIsUnderlined;
+            ChoosePlaceColumnPhraseFontWeight.SelectedIndex = ConvertFontWeightToIndex(Program.Settings.PlaceColumnPhraseFontWeight);
+            ShowPlaceColumnPhraseFontColor.Background = new SolidColorBrush(Program.Settings.PlaceColumnPhraseFontColor);
+            PlaceColumnPhraseFontSizeTB.Text = Program.Settings.PlaceColumnPhraseFontSize.ToString();
+            PlaceColumnPhraseTB.Text = Program.Settings.PlaceColumnPhrase;
+            PlaceColumnPhraseXOffsetTB.Text = Program.Settings.PlaceColumnPhraseXOffset.ToString();
+            PlaceColumnPhraseYOffsetTB.Text = Program.Settings.PlaceColumnPhraseYOffset.ToString();
+
             LowerPhraseTB.Document.LineHeight = 0.1;
+
             #endregion
 
             StartViewer();
@@ -408,7 +466,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
 
 
             Program.Settings.LowerPhraseOffset = 100;
-            Program.Settings.LowerPhraseFontSize = 10;
+            Program.Settings.LowerPhraseFontSize = 30;
             Program.Settings.LowerPhraseFontWeight = FontWeights.Normal;
             Program.Settings.LowerPhraseFontColor = Colors.Black;
             Program.Settings.LowerPhraseShowMode = Program.Settings.ShowMode.AlwaysVisible;
@@ -430,6 +488,40 @@ namespace ResultViewerWPF.Viewer.Dialogs
             Program.Settings.BackgroundColor2 = Colors.DeepSkyBlue;
             Program.Settings.BackgroundAnimPeriod = TimeSpan.FromSeconds(3);
             Program.Settings.BackgroundAppearTime = TimeSpan.FromSeconds(2);
+
+            Program.Settings.UseColorRanges = true;
+            Program.Settings.ColorRangeList.Clear();
+            Program.Settings.ColorRangeList = new LinkedList<ColorRange>();
+            Program.Settings.ColorRangeList.AddLast(new ColorRange("Первое место", 1, Program.Settings.MemberPanelFirstPlace));
+            Program.Settings.ColorRangeList.AddLast(new ColorRange("Второе место", 1, Program.Settings.MemberPanelSecondPlace));
+            Program.Settings.ColorRangeList.AddLast(new ColorRange("Третье место", 1, Program.Settings.MemberPanelThirdPlace));
+
+            Program.Settings.PointsColumnPhraseShowMode = Program.Settings.PhraseShowMode.Always;
+            Program.Settings.PointsColumnPhraseIsUnderlined = true;
+            Program.Settings.PointsColumnPhraseFontWeight = FontWeights.Normal;
+            Program.Settings.PointsColumnPhraseFontColor = Colors.Red;
+            Program.Settings.PointsColumnPhraseFontSize = 14;
+            Program.Settings.PointsColumnPhrase = "Баллы";
+            Program.Settings.PointsColumnPhraseXOffset = -2;
+            Program.Settings.PointsColumnPhraseYOffset = -8;
+
+            Program.Settings.ResultColumnPhraseShowMode = Program.Settings.PhraseShowMode.Never;
+            Program.Settings.ResultColumnPhraseIsUnderlined = true;
+            Program.Settings.ResultColumnPhraseFontWeight = FontWeights.Normal;
+            Program.Settings.ResultColumnPhraseFontColor = Colors.Red;
+            Program.Settings.ResultColumnPhraseFontSize = 14;
+            Program.Settings.ResultColumnPhrase = "Результаты";
+            Program.Settings.ResultColumnPhraseXOffset = -4;
+            Program.Settings.ResultColumnPhraseYOffset = -7;
+
+            Program.Settings.PlaceColumnPhraseShowMode = Program.Settings.PhraseShowMode.Always;
+            Program.Settings.PlaceColumnPhraseIsUnderlined = true;
+            Program.Settings.PlaceColumnPhraseFontWeight = FontWeights.Normal;
+            Program.Settings.PlaceColumnPhraseFontSize = 14;
+            Program.Settings.PlaceColumnPhrase = "Место";
+            Program.Settings.PlaceColumnPhraseXOffset = 2;
+            Program.Settings.PlaceColumnPhraseYOffset = -8;
+
 
             MessageBox.Show("Установлены настройки по-умолчанию", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
@@ -592,8 +684,15 @@ namespace ResultViewerWPF.Viewer.Dialogs
                 GraphicsEngine.MoveTo(memberPanels[i], coordinates.Member(i));
             }
 
+            // Нижняя фраза
             lowerPhrase = new TextBar(MainCanvas, Program.Settings.LowerPhrase);
 
+            // Надписи над колонками. Инициализация и моментальное перемещение
+            pointColumnPhrase = new PointColumnTextBar(MainCanvas);
+            resultColumnPhrase = new ResultColumnTextBar(MainCanvas);
+            placeColumnPhrase = new PlaceColumnTextBar(MainCanvas);
+
+            // Запуск анимаций
             if (Program.Settings.MemberPanelUseSecondChooseColor)
                 GraphicsEngine.ChangeMemberColor(memberPanels[0], Program.Settings.MemberPanelChosenColor2);
             GraphicsEngine.ChangeMemberColor(memberPanels[1], Program.Settings.MemberPanelChosenColor, (e3, ev3) =>
@@ -603,20 +702,36 @@ namespace ResultViewerWPF.Viewer.Dialogs
                     pointPanel.NumOfPoints = 10;
                     memberPanels[1].IsChosen = true;
                     memberPanels[1].IsColored = true;
-                    GraphicsEngine.MoveToInstant(pointPanel, coordinates.PointBar(-1));
-                    GraphicsEngine.Appear(pointPanel);
+                    GraphicsEngine.MoveToInstant(pointPanel, coordinates.PointBar(-1));                    
+                    GraphicsEngine.Appear(pointPanel); // Появление панели с баллами
                     GraphicsEngine.Resize(pointPanel, 1.5, (object e1, EventArgs ev1) =>
                     {
                         GraphicsEngine.Wait(Program.Settings.AnimPointBarPause, (object e2, EventArgs ev2) =>
                         {
                             GraphicsEngine.MoveTo(pointPanel, coordinates.PointBar(1));
-                            GraphicsEngine.Resize(pointPanel, 0.1);
+                            GraphicsEngine.Resize(pointPanel, 0.1); // Перемещение панели с баллами к участнику
                             memberPanels[1].Points += pointPanel.NumOfPoints;
                             GraphicsEngine.Disappear(pointPanel, new EventHandler((object e4, EventArgs ev4) =>
                             {
+                                bool resultsVisible = true;
 
+                                // Определение поведения, в зависимости от отображаемых колонок
+                                if (Program.Settings.ShowMemberResultMode != Program.Settings.ResultShowMode.AlwaysVisible)
+                                    resultsVisible = false;
+
+                                // Перемещение и проявлений надписей к колонкам
+                                GraphicsEngine.MoveToInstant(pointColumnPhrase, coordinates.PointsColumnPhrase(pointColumnPhrase.GetPanelWidth(), pointColumnPhrase.GetPanelHeight()));
+                                GraphicsEngine.barAppear(pointColumnPhrase, 1);
+                                GraphicsEngine.MoveToInstant(placeColumnPhrase, coordinates.PlaceColumnPhrase(placeColumnPhrase.GetPanelWidth(), placeColumnPhrase.GetPanelHeight(), resultsVisible));
+                                GraphicsEngine.barAppear(placeColumnPhrase, 1);
+                                GraphicsEngine.MoveToInstant(resultColumnPhrase, coordinates.ResultColumnPhrase(resultColumnPhrase.GetPanelWidth(), resultColumnPhrase.GetPanelHeight()));
+                                GraphicsEngine.barAppear(resultColumnPhrase, resultsVisible ? 1 : 0);
+
+                                // Перемещение и проявлений нижней фразы
                                 GraphicsEngine.MoveToInstant(lowerPhrase, coordinates.LowerFrase(lowerPhrase.GetPanelWidth(), lowerPhrase.GetPanelHeight()));
-                                GraphicsEngine.Appear(lowerPhrase);
+                                GraphicsEngine.barAppear(lowerPhrase, 1);
+
+                                // Обновление коллекции участников с новыми баллами
                                 SortMembers();
                                 UpdatePlaces();
 
@@ -654,7 +769,39 @@ namespace ResultViewerWPF.Viewer.Dialogs
             }
 
             e.Handled = true;
-        }        
+        }
+
+        /// <summary>
+        /// Фильтрация дробных чисел, в том числе и отрицательных
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void FilterNumbersNegativeOnly(object sender, TextCompositionEventArgs e)
+        {
+            TextBox currentTB = sender as TextBox;
+
+            // Если точка, то...
+            if (e.Text == "," || e.Text == ".")
+            {
+                // Смотрим, не вводят ли её в пустое поле или нет ли еще таких же уже введённых точек, то всё норм
+                if ((!currentTB.Text.Contains(",") && currentTB.Text.Length != 0) || (!currentTB.Text.Contains(".") && currentTB.Text.Length != 0))
+                    return;
+            }
+            else
+            {
+                if (e.Text == "-")
+                {
+                    if (!currentTB.Text.Contains("-") && currentTB.Text.Length == 0)
+                        return;
+                }
+                else
+                    // Если это цифра, то всё норм
+                    if (char.IsDigit(e.Text, 0))
+                        return;
+            }
+
+            e.Handled = true;
+        }
 
         /// <summary>
         /// Показать или спрятать меню с настройками
@@ -843,6 +990,9 @@ namespace ResultViewerWPF.Viewer.Dialogs
 
             MainCanvas.Children.Remove(pointPanel.mainPanel);
             MainCanvas.Children.Remove(lowerPhrase.mainPanel);
+            MainCanvas.Children.Remove(pointColumnPhrase.mainPanel);
+            MainCanvas.Children.Remove(resultColumnPhrase.mainPanel);
+            MainCanvas.Children.Remove(placeColumnPhrase.mainPanel);
 
             MainCanvas.Background = Brushes.Black;
             StartViewer();
@@ -859,11 +1009,35 @@ namespace ResultViewerWPF.Viewer.Dialogs
 
         private void ShowFinalscreenColors(object sender, RoutedEventArgs e)
         {
-            GraphicsEngine.ChangeMemberColor(memberPanels[0], Program.Settings.MemberPanelFirstPlace);
-            GraphicsEngine.ChangeMemberColor(memberPanels[1], Program.Settings.MemberPanelSecondPlace);
-            GraphicsEngine.ChangeMemberColor(memberPanels[2], Program.Settings.MemberPanelThirdPlace);
-            for (int i = 3; i < memberPanels.Count; i++)
-                GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelOtherPlaces);
+            if (!CanUseColorRanges || !Program.Settings.UseColorRanges)
+            {
+                GraphicsEngine.ChangeMemberColor(memberPanels[0], Program.Settings.MemberPanelFirstPlace);
+                GraphicsEngine.ChangeMemberColor(memberPanels[1], Program.Settings.MemberPanelSecondPlace);
+                GraphicsEngine.ChangeMemberColor(memberPanels[2], Program.Settings.MemberPanelThirdPlace);
+                for (int i = 3; i < memberPanels.Count; i++)
+                    GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelOtherPlaces);
+            }
+            else
+            {
+                int sumOfRanges = Program.Settings.ColorRangeList.Select(x => ((Viewer.ColorRange)x).Count).Sum();
+                int currentCell = 0;
+                for (int rangeCount = 0; rangeCount < Program.Settings.ColorRangeList.Count; rangeCount++)
+                {
+                    int rangeLimit = Program.Settings.ColorRangeList.ElementAt(rangeCount).Count;
+                    for (int i = rangeLimit; i > 0; i--)
+                    {
+                        // Если дошли до последнего участнкиа, то останавливаем цикл
+                        if (currentCell == memberPanels.Count)
+                            return;
+
+                        // Присвоим новый цвет
+                        GraphicsEngine.ChangeMemberColor(memberPanels[currentCell], Program.Settings.ColorRangeList.ElementAt(rangeCount).CurrentColor);
+
+                        // Перейдём на следующую ячейку
+                        currentCell++;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -873,6 +1047,8 @@ namespace ResultViewerWPF.Viewer.Dialogs
         /// <param name="ev"></param>
         private void CloseWindow(object sender, EventArgs ev)
         {
+            MainCanvas.Children.Clear();
+
             Close();
         }
 
@@ -1126,6 +1302,9 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeMemberPlacePanelColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPlacePanelColor, ShowMemberPlacePanelColor);
         private void ChangeMemberPlaceStrokeColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.MemberPlaceStrokeColor, ShowMemberPlaceStrokeColor);
         private void ChangeLowerPanelFontColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.LowerPhraseFontColor, ShowLowerPanelFontColor);
+        private void ChangePointsColumnPhraseFontColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.PointsColumnPhraseFontColor, ShowPointsColumnPhraseFontColor);
+        private void ChangeResultColumnPhraseFontColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.ResultColumnPhraseFontColor, ShowResultColumnPhraseFontColor);
+        private void ChangePlaceColumnPhraseFontColor_Click(object sender, RoutedEventArgs e) => UpdateColor(ref Program.Settings.PlaceColumnPhraseFontColor, ShowPlaceColumnPhraseFontColor);
 
         private void ChangeMemberPanelWidth(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPanelWidth);
         private void ChangeMemberPanelHeight(object sender, RoutedEventArgs e) => UpdateValueFromTB(sender as TextBox, ref Program.Settings.MemberPanelHeight);
@@ -1162,6 +1341,15 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeMemberPlaceStrokeWidth(object sender, RoutedEventArgs e) => UpdateValueFromTB(MemberPlaceStrokeWidthTB, ref Program.Settings.MemberPlaceStrokeWidth);
         private void ChangeLowerPhraseOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(LowerPhraseOffsetTB, ref Program.Settings.LowerPhraseOffset);
         private void ChangeLowerPhraseFontHeight(object sender, RoutedEventArgs e) => UpdateValueFromTB(LowerPhraseFontHeightTB, ref Program.Settings.LowerPhraseFontSize);
+        private void ChangePointsColumnPhraseFontSize(object sender, RoutedEventArgs e) => UpdateValueFromTB(PointsColumnPhraseFontSizeTB, ref Program.Settings.PointsColumnPhraseFontSize);
+        private void ChangePointsColumnPhraseXOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(PointsColumnPhraseXOffsetTB, ref Program.Settings.PointsColumnPhraseXOffset);
+        private void ChangePointsColumnPhraseYOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(PointsColumnPhraseYOffsetTB, ref Program.Settings.PointsColumnPhraseYOffset);
+        private void ChangeResultColumnPhraseFontSize(object sender, RoutedEventArgs e) => UpdateValueFromTB(ResultColumnPhraseFontSizeTB, ref Program.Settings.ResultColumnPhraseFontSize);
+        private void ChangeResultColumnPhraseXOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(ResultColumnPhraseXOffsetTB, ref Program.Settings.ResultColumnPhraseXOffset);
+        private void ChangeResultColumnPhraseYOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(ResultColumnPhraseYOffsetTB, ref Program.Settings.ResultColumnPhraseYOffset);
+        private void ChangePlaceColumnPhraseFontSize(object sender, RoutedEventArgs e) => UpdateValueFromTB(PlaceColumnPhraseFontSizeTB, ref Program.Settings.PlaceColumnPhraseFontSize);
+        private void ChangePlaceColumnPhraseXOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(PlaceColumnPhraseXOffsetTB, ref Program.Settings.PlaceColumnPhraseXOffset);
+        private void ChangePlaceColumnPhraseYOffset(object sender, RoutedEventArgs e) => UpdateValueFromTB(PlaceColumnPhraseYOffsetTB, ref Program.Settings.PlaceColumnPhraseYOffset);
 
         private void ChangeMemberPanelUseSecondShooseColor_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.MemberPanelUseSecondChooseColor);
         private void ChangeMemberPanelHighlightLeaders_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.MemberPanelHighlightLeaders);
@@ -1169,15 +1357,25 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void ChangeChangeTwoColumns_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.TwoColumns);        
         private void ChangeAnimatedBackground_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.AnimatedBackground);
         private void ChangeVideoBackground_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.VideoBackground);
+        private void UseColorRanges_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.UseColorRanges);
+        private void PointsColumnPhraseIsUnderlined_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.PointsColumnPhraseIsUnderlined);
+        private void ResultColumnPhraseIsUnderlined_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.ResultColumnPhraseIsUnderlined);
+        private void PlaceColumnPhraseIsUnderlined_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.PlaceColumnPhraseIsUnderlined);
 
         private void ChangeFinalPhrase(object sender, RoutedEventArgs e) => Program.Settings.FinalPhrase = (sender as TextBox).Text ?? Program.Settings.FinalPhrase;
+        private void ChangePointsColumnPhrase(object sender, RoutedEventArgs e) => Program.Settings.PointsColumnPhrase = (sender as TextBox).Text ?? Program.Settings.PointsColumnPhrase;
         private void ChangeLowerPhrase(object sender, RoutedEventArgs e) => Program.Settings.LowerPhrase = new TextRange((sender as RichTextBox).Document.ContentStart, (sender as RichTextBox).Document.ContentEnd).Text ?? Program.Settings.LowerPhrase;
+        private void ChangeResultColumnPhrase(object sender, RoutedEventArgs e) => Program.Settings.ResultColumnPhrase = (sender as TextBox).Text ?? Program.Settings.ResultColumnPhrase;
+        private void ChangePlaceColumnPhrase(object sender, RoutedEventArgs e) => Program.Settings.PlaceColumnPhrase = (sender as TextBox).Text ?? Program.Settings.PlaceColumnPhrase;
 
         private void ChooseMemberNameFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.MemberNameFontWeight = ConvertIndexToFontWeight(ChooseMemberNameFontWeight.SelectedIndex);
         private void ChooseJuryFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.JuryFontWeight = ConvertIndexToFontWeight(ChooseJuryFontWeight.SelectedIndex);
         private void ChooseMemberPlaceFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.MemberPlaceFontWeight = ConvertIndexToFontWeight(ChooseMemberPlaceFontWeight.SelectedIndex);
         private void ChooseMemberResultFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.MemberResultFontWeight = ConvertIndexToFontWeight((sender as ComboBox).SelectedIndex);
         private void ChooseLowerPhraseFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.LowerPhraseFontWeight = ConvertIndexToFontWeight((sender as ComboBox).SelectedIndex);
+        private void ChoosePointsColumnPhraseFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.PointsColumnPhraseFontWeight = ConvertIndexToFontWeight((sender as ComboBox).SelectedIndex);
+        private void ChangeResultColumnPhraseFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.ResultColumnPhraseFontWeight = ConvertIndexToFontWeight((sender as ComboBox).SelectedIndex);
+        private void PlaceColumnPhraseFontWeight_SelectionChanged(object sender, SelectionChangedEventArgs e) => Program.Settings.PlaceColumnPhraseFontWeight = ConvertIndexToFontWeight((sender as ComboBox).SelectedIndex);
 
         private void ChooseMemberPlaceShowMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1224,6 +1422,38 @@ namespace ResultViewerWPF.Viewer.Dialogs
             }
         }
 
+        private void ChangePointsColumnPhraseShowMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch ((sender as ComboBox).SelectedIndex)
+            {
+                case 0:
+                    Program.Settings.PointsColumnPhraseShowMode = Program.Settings.PhraseShowMode.Never;
+                    break;
+                case 1:
+                    Program.Settings.PointsColumnPhraseShowMode = Program.Settings.PhraseShowMode.OnlyOnFinalScreen;
+                    break;
+                case 2:
+                    Program.Settings.PointsColumnPhraseShowMode = Program.Settings.PhraseShowMode.Always;
+                    break;
+            }
+        }
+
+        private void ChangeResultColumnPhraseShowMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch ((sender as ComboBox).SelectedIndex)
+            {
+                case 0:
+                    Program.Settings.ResultColumnPhraseShowMode = Program.Settings.PhraseShowMode.Never;
+                    break;
+                case 1:
+                    Program.Settings.ResultColumnPhraseShowMode = Program.Settings.PhraseShowMode.OnlyOnFinalScreen;
+                    break;
+                case 2:
+                    Program.Settings.ResultColumnPhraseShowMode = Program.Settings.PhraseShowMode.Always;
+                    break;
+            }
+        }
+
         private void ChangeMemberPointsMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch ((sender as ComboBox).SelectedIndex)
@@ -1252,6 +1482,22 @@ namespace ResultViewerWPF.Viewer.Dialogs
                     break;
                 case 2:
                     Program.Settings.LowerPhraseShowMode = Program.Settings.ShowMode.Never;
+                    break;
+            }
+        }
+
+        private void ChangePlaceColumnPhraseShowMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch ((sender as ComboBox).SelectedIndex)
+            {
+                case 0:
+                    Program.Settings.PlaceColumnPhraseShowMode = Program.Settings.PhraseShowMode.Never;
+                    break;
+                case 1:
+                    Program.Settings.PlaceColumnPhraseShowMode = Program.Settings.PhraseShowMode.OnlyOnFinalScreen;
+                    break;
+                case 2:
+                    Program.Settings.PlaceColumnPhraseShowMode = Program.Settings.PhraseShowMode.Always;
                     break;
             }
         }

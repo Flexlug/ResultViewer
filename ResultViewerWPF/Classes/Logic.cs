@@ -234,6 +234,26 @@ namespace ResultViewerWPF
             return jury_choice.Count;
         }
 
+        /// <summary>
+        /// Вычисляет, имеются ли сейчас случаи, когда на одном месте несколько человек
+        /// </summary>
+        /// <returns></returns>
+        public bool PointsCollisionsExists()
+        {
+            // Итоговые баллы участников
+            double[] points = new double[members.Count];
+            for (int jury = 0; jury < jury_choice.Count; jury++)
+                for (int mem = 0; mem < members.Count; mem++)
+                    points[mem] += GetPoint(jury, mem);
+
+            // Если есть хоть какие-то совпадающие баллы, то соответственно есть случаи, когда на одном месте несколько человек
+            for (int i = 0; i < points.Length - 1; i++)
+                if (points[i] == points[i + 1])
+                    return true;
+
+            return false;
+        }
+
         public Logic(List<string> _members, Dictionary<string, Tuple<List<double>, List<double>>> _juryChoice)
         {
             members = _members;

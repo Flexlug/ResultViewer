@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using ResultViewerWPF;
 using ResultViewerWPF.Viewer.Dialogs;
 using ResultViewerWPF.Compitability;
+using System.Diagnostics;
 
 namespace ResultViewerWPF
 {
@@ -354,6 +355,11 @@ namespace ResultViewerWPF
                             // Обновляем кнопку Создать/Изменить
                             UpdateDataStatus();
 
+                            
+                            // Если присутствуют коллизии, то предупреждаем об этом пользователя
+                            if (AppLogic.PointsCollisionsExists())
+                                Program.Warnings.ShowLogicCollisionWarning();
+
                             // Возвращаем дефолтный FilePath
                             Program.IO.RestoreDefaultPath();
                         }
@@ -497,6 +503,15 @@ namespace ResultViewerWPF
         {
             if (quickShow != null)
                 quickShow.Close();
+
+
+            // Завершение всех потоков
+            // может появиться исключение, если FastViewer закрыли а не все анимации успели завершиться
+            var threads = Process.GetCurrentProcess().Threads;
+            foreach (ProcessThread th in threads)
+                th.Dispose();
+
+            Application.Current.Shutdown(0);
         }
 
         /// <summary>
@@ -591,7 +606,7 @@ namespace ResultViewerWPF
                     }
                     else
                     {
-                        MessageBox.Show("Соханение прервано пользователем.", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        MessageBox.Show("Сохранение прервано пользователем.", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     }
                 }
             }

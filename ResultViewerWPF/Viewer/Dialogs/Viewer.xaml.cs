@@ -18,6 +18,7 @@ using System.Windows.Interop;
 using System.IO;
 
 using ResultViewerWPF.Viewer.Primitives;
+using ResultViewerWPF.Viewer.Primitives.ColumnTextBar;
 
 namespace ResultViewerWPF.Viewer
 
@@ -98,6 +99,26 @@ namespace ResultViewerWPF.Viewer
         TextBar lowerPhrase;
 
         /// <summary>
+        /// Надпись над колонкой с баллами
+        /// </summary>
+        PointColumnTextBar pointPhrase;
+
+        /// <summary>
+        /// Надпись над колонкой с результатами
+        /// </summary>
+        ResultColumnTextBar resultPhrase;
+
+        /// <summary>
+        /// Надпись над колонками с предварительными местами в топе
+        /// </summary>
+        PlaceColumnTextBar placePhrase;
+
+        /// <summary>
+        /// Определяет, можно ли использовать нестандартную конфигурацию цветов
+        /// </summary>
+        bool CanUseColorConfiguration = true;
+
+        /// <summary>
         /// Инициализирует визуализатор результатов конкурса
         /// </summary>
         /// <param name="logic">Логика приложения со всеми необходимыми данными</param>
@@ -114,10 +135,19 @@ namespace ResultViewerWPF.Viewer
 
             // Получим ссылку на логику
             appLogic = logic;
-            
+
+            // Проверим, можно ли использовать нестандартные конфигурации цветов
+            if (appLogic.PointsCollisionsExists())
+                CanUseColorConfiguration = false;
+
             // Стадия показа: загрузить начальные данные
             currentState = ShowState.ShowField;
-            
+
+            // Инициализация колонок с баллами
+            pointPhrase = new PointColumnTextBar(mainCanvas);
+            resultPhrase = new ResultColumnTextBar(mainCanvas);
+            placePhrase = new PlaceColumnTextBar(mainCanvas);
+
             // Указываем рабочую поверхность
             GraphicsEngine.CurrentCanvas = mainCanvas;
         }
@@ -278,6 +308,25 @@ namespace ResultViewerWPF.Viewer
                             GraphicsEngine.MoveTo(memberPanels[i], coordinates.Member(i));
                         }
 
+                        // Если панель с дополнительными баллами отключена или не должна отображаться сейчас, то переставляем coordinates provider в соответствующий режим
+                        if (Program.Settings.ShowMemberResultMode != Program.Settings.ResultShowMode.AlwaysVisible)
+                            coordinates.ResultColumnVisible = false;
+
+                        // Расставляем надписи к колонкам
+                        GraphicsEngine.MoveToInstant(pointPhrase, coordinates.PointsColumnPhrase(pointPhrase.mainPanel.ActualWidth, pointPhrase.mainPanel.ActualHeight));
+                        GraphicsEngine.MoveToInstant(resultPhrase, coordinates.ResultColumnPhrase(resultPhrase.mainPanel.ActualWidth, resultPhrase.mainPanel.ActualHeight));
+                        GraphicsEngine.MoveToInstant(placePhrase, coordinates.PlaceColumnPhrase(placePhrase.mainPanel.ActualWidth, placePhrase.mainPanel.ActualHeight));
+
+                        // Если фразы отображаются на протяжении всего показа, то отобразим их сразу
+                        if (Program.Settings.PointsColumnPhraseShowMode == Program.Settings.PhraseShowMode.Always)
+                            GraphicsEngine.barAppear(pointPhrase, 1);
+
+                        if (Program.Settings.ResultColumnPhraseShowMode == Program.Settings.PhraseShowMode.Always)
+                            GraphicsEngine.barAppear(resultPhrase, 1);
+
+                        if (Program.Settings.PlaceColumnPhraseShowMode == Program.Settings.PhraseShowMode.Always)
+                            GraphicsEngine.barAppear(placePhrase, 1);
+
                         #endregion
 
                         // Стадия показа: показываем анимацию баллов
@@ -364,7 +413,7 @@ namespace ResultViewerWPF.Viewer
                             // С этим жюри закончили. Проверяем, не последний ли это жюри
                             if (currentJury + 1 != juryPanels.Count)
                             {
-                                // Делаем анимацию для смени жюри
+                                // Делаем анимацию для смены жюри
                                 GraphicsEngine.Disappear(juryPanels[currentJury]);
 
                                 // Ставим следующего жюри, обнуляем указатель на участника
@@ -416,31 +465,61 @@ namespace ResultViewerWPF.Viewer
                                 // Проверяем, надо ли выделить лидеров отдельными цветами
                                 if (Program.Settings.MemberPanelHighlightLeaders)
                                 {
-                                    for (int i = 0; i < memberPanels.Count; i++)
+                                    // Если нельзя использовать ColorRangeList, то просто подсвечиваем первые три места
+                                    // Так же поступаем, если отображение нестандартной конфигурации выключено
+                                    if (!CanUseColorConfiguration || !Program.Settings.UseColorRanges)
                                     {
-                                        if (memberPanels[i].Place == 1)
+                                        for (int i = 0; i < memberPanels.Count; i++)
                                         {
-                                            GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelFirstPlace);
-                                        }
-                                        else
-                                        {
-                                            if (memberPanels[i].Place == 2)
+                                            if (memberPanels[i].Place == 1)
                                             {
-                                                GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelSecondPlace);
+                                                GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelFirstPlace);
                                             }
                                             else
                                             {
-                                                if (memberPanels[i].Place == 3)
+                                                if (memberPanels[i].Place == 2)
                                                 {
-                                                    GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelThirdPlace);
+                                                    GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelSecondPlace);
                                                 }
                                                 else
                                                 {
-                                                    GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelOtherPlaces);
+                                                    if (memberPanels[i].Place == 3)
+                                                    {
+                                                        GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelThirdPlace);
+                                                    }
+                                                    else
+                                                    {
+                                                        GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelOtherPlaces);
+                                                    }
                                                 }
                                             }
+                                        };
+                                    }
+                                    else
+                                    {
+                                        // Заранее окрасим всех в стандартный цвет
+                                        foreach (MemberBar mem in memberPanels)
+                                            GraphicsEngine.ChangeMemberColor(mem, Program.Settings.MemberPanelOtherPlaces);
+
+                                        int sumOfRanges = Program.Settings.ColorRangeList.Select(x => ((Viewer.ColorRange)x).Count).Sum();
+                                        int currentCell = 0;
+                                        for (int rangeCount = 0; rangeCount < Program.Settings.ColorRangeList.Count; rangeCount++)
+                                        {
+                                            int rangeLimit = Program.Settings.ColorRangeList.ElementAt(rangeCount).Count;
+                                            for (int i = rangeLimit; i > 0; i--)
+                                            {
+                                                // Если дошли до последнего участника, то останавливаем цикл
+                                                if (currentCell == memberPanels.Count)
+                                                    return;
+
+                                                // Присвоим новый цвет
+                                                GraphicsEngine.ChangeMemberColor(memberPanels[currentCell], Program.Settings.ColorRangeList.ElementAt(rangeCount).CurrentColor);
+
+                                                // Перейдём на следующую ячейку
+                                                currentCell++;
+                                            }
                                         }
-                                    };
+                                    }
                                 }
                                 else
                                 {
@@ -471,6 +550,20 @@ namespace ResultViewerWPF.Viewer
                                 // Выключаем все буквы
                                 for (int mem = 0; mem < memberPanels.Count; mem++)
                                     memberPanels[mem].ShowMask = false;
+
+                                // Отобразим надписи к колонкам, если надо
+                                if (Program.Settings.PointsColumnPhraseShowMode == Program.Settings.PhraseShowMode.OnlyOnFinalScreen)
+                                    GraphicsEngine.barAppear(pointPhrase, 1);
+                                if (Program.Settings.PlaceColumnPhraseShowMode == Program.Settings.PhraseShowMode.OnlyOnFinalScreen)
+                                    GraphicsEngine.barAppear(placePhrase, 1);
+
+                                // В финале фраза с результатами не отображается
+                                GraphicsEngine.Disappear(resultPhrase);
+
+                                // Переместим остальные фразы
+                                coordinates.ResultColumnVisible = false;
+                                GraphicsEngine.MoveTo(pointPhrase, coordinates.PointsColumnPhrase(pointPhrase.mainPanel.ActualWidth, pointPhrase.mainPanel.ActualHeight));
+                                GraphicsEngine.MoveTo(placePhrase, coordinates.PlaceColumnPhrase(placePhrase.mainPanel.ActualWidth, placePhrase.mainPanel.ActualHeight));
 
                                 // Убираем поясняюую фразу, если надо
                                 if (lowerPhrase.IsVisible)

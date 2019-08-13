@@ -108,7 +108,17 @@
 
                         <GroupBox Header="Цветовое выделение" ToolTip="Настройка цветового выделения в программе">
                             <StackPanel Margin="5">
-                                <Button Content="Конфигурация" ToolTip="Открыть мастера настройки цветового выделения в программе" Click="NominationWizard_Click"/>
+                                <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0, 0, 0, 0">
+                                    <CheckBox x:Name="UseColorRanges" VerticalAlignment="Center" ToolTip="Использовать настраиваемую конфигурацию цветов" Click="UseColorRanges_Click"/>
+                                    <Label ToolTip="Использовать конифгурацию цветов" Margin="0, 0, 0, 0">
+                                        <TextBlock>
+                                            <Run>Использовать</Run>
+                                            <LineBreak/>
+                                            <Run>конфигурацию цветов</Run>
+                                        </TextBlock>
+                                    </Label>
+                                </StackPanel>
+                                <Button x:Name="ColorConfigurationButton" Content="Конфигурация" ToolTip="Открыть мастера настройки цветового выделения в программе" Click="NominationWizard_Click"/>
                             </StackPanel>
                         </GroupBox>
                         
@@ -438,6 +448,205 @@
                             </StackPanel>
                         </GroupBox>
 
+                        <GroupBox Header="Названия колонок">
+                            <StackPanel>
+                                <GroupBox Header="Колонка с баллами">
+                                    <StackPanel>
+                                        <CheckBox x:Name="PointsColumnPhraseIsUnderlined" Margin="0, 5, 0, 0" VerticalAlignment="Center" Click="PointsColumnPhraseIsUnderlined_Click" ToolTip="Включает или отключает подчёркивание надписи">
+                                            <TextBlock>
+                                            <Run>Подчёркивание</Run>
+                                            <LineBreak/>
+                                            <Run>надписи</Run>
+                                            </TextBlock>
+                                        </CheckBox>
+
+                                        <Label Content="Режим отображения" ToolTip="Режим отображения надписи над колонкой с баллами"/>
+                                        <ComboBox x:Name="ChoosePointsColumnPhraseShowMode" SelectionChanged="ChangePointsColumnPhraseShowMode_SelectionChanged">
+                                            <ComboBoxItem Content="Не показывать" ToolTip=""/>
+                                            <ComboBoxItem Content="Только в финале"/>
+                                            <ComboBoxItem Content="Всегда"/>
+                                        </ComboBox>
+
+                                        <Label Content="Тип шрифта" ToolTip="Тип шрифта для панели с предварительным результатом"/>
+                                        <ComboBox x:Name="ChoosePointsColumnPhraseFontWeight" SelectionChanged="ChoosePointsColumnPhraseFontWeight_SelectionChanged">
+                                            <ComboBoxItem Content="Black"/>
+                                            <ComboBoxItem Content="Bold"/>
+                                            <ComboBoxItem Content="DemiBold"/>
+                                            <ComboBoxItem Content="ExtraBlack"/>
+                                            <ComboBoxItem Content="ExtraBold"/>
+                                            <ComboBoxItem Content="ExtraLight"/>
+                                            <ComboBoxItem Content="Heavy"/>
+                                            <ComboBoxItem Content="Light"/>
+                                            <ComboBoxItem Content="Medium"/>
+                                            <ComboBoxItem Content="Normal"/>
+                                            <ComboBoxItem Content="Regular"/>
+                                            <ComboBoxItem Content="SemiBold"/>
+                                            <ComboBoxItem Content="Thin"/>
+                                            <ComboBoxItem Content="UltraBlack"/>
+                                            <ComboBoxItem Content="UltraBold"/>
+                                            <ComboBoxItem Content="UltraLight"/>
+                                        </ComboBox>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет шрифта надписи" Margin="0, 0, 0, -8"/>
+                                            <Canvas x:Name="ShowPointsColumnPhraseFontColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
+                                            <Button x:Name="ChangePointsColumnPhraseFontColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangePointsColumnPhraseFontColor_Click"/>
+                                        </Grid>
+
+                                        <Label Content="Размер шрифта"/>
+                                        <TextBox x:Name="PointsColumnPhraseFontSizeTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangePointsColumnPhraseFontSize"/>
+
+                                        <Label Content="Надпись"/>
+                                        <TextBox x:Name="PointsColumnPhraseTB" LostFocus="ChangePointsColumnPhrase"/>
+
+                                        <Label Content="Смещение X"/>
+                                        <TextBox x:Name="PointsColumnPhraseXOffsetTB" PreviewTextInput="FilterNumbersNegativeOnly" LostFocus="ChangePointsColumnPhraseXOffset"/>
+
+                                        <Label Content="Смещение Y"/>
+                                        <TextBox x:Name="PointsColumnPhraseYOffsetTB" PreviewTextInput="FilterNumbersNegativeOnly" LostFocus="ChangePointsColumnPhraseYOffset"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <GroupBox Header="Колонка с результатами">
+                                    <StackPanel>
+                                        <CheckBox x:Name="ResultColumnPhraseIsUnderlined" Margin="0, 5, 0, 0" VerticalAlignment="Center" Click="ResultColumnPhraseIsUnderlined_Click" ToolTip="Включает или отключает подчёркивание надписи">
+                                            <TextBlock>
+                                            <Run>Подчёркивание</Run>
+                                            <LineBreak/>
+                                            <Run>надписи</Run>
+                                            </TextBlock>
+                                        </CheckBox>
+
+                                        <Label Content="Режим отображения" ToolTip="Режим отображения надписи над колонкой с результатами"/>
+                                        <ComboBox x:Name="ChooseResultColumnPhraseShowMode" SelectionChanged="ChangeResultColumnPhraseShowMode_SelectionChanged">
+                                            <ComboBoxItem Content="Не показывать" ToolTip=""/>
+                                            <ComboBoxItem Content="Только в финале"/>
+                                            <ComboBoxItem Content="Всегда"/>
+                                        </ComboBox>
+
+                                        <Label Content="Тип шрифта" ToolTip="Тип шрифта для панели с предварительным результатом"/>
+                                        <ComboBox x:Name="ChooseResultColumnPhraseFontWeight" SelectionChanged="ChangeResultColumnPhraseFontWeight_SelectionChanged">
+                                            <ComboBoxItem Content="Black"/>
+                                            <ComboBoxItem Content="Bold"/>
+                                            <ComboBoxItem Content="DemiBold"/>
+                                            <ComboBoxItem Content="ExtraBlack"/>
+                                            <ComboBoxItem Content="ExtraBold"/>
+                                            <ComboBoxItem Content="ExtraLight"/>
+                                            <ComboBoxItem Content="Heavy"/>
+                                            <ComboBoxItem Content="Light"/>
+                                            <ComboBoxItem Content="Medium"/>
+                                            <ComboBoxItem Content="Normal"/>
+                                            <ComboBoxItem Content="Regular"/>
+                                            <ComboBoxItem Content="SemiBold"/>
+                                            <ComboBoxItem Content="Thin"/>
+                                            <ComboBoxItem Content="UltraBlack"/>
+                                            <ComboBoxItem Content="UltraBold"/>
+                                            <ComboBoxItem Content="UltraLight"/>
+                                        </ComboBox>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет шрифта надписи" Margin="0, 0, 0, -8"/>
+                                            <Canvas x:Name="ShowResultColumnPhraseFontColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
+                                            <Button x:Name="ChangeResultColumnPhraseFontColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangeResultColumnPhraseFontColor_Click"/>
+                                        </Grid>
+
+                                        <Label Content="Размер шрифта"/>
+                                        <TextBox x:Name="ResultColumnPhraseFontSizeTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangeResultColumnPhraseFontSize"/>
+
+                                        <Label Content="Надпись"/>
+                                        <TextBox x:Name="ResultColumnPhraseTB" LostFocus="ChangeResultColumnPhrase"/>
+
+                                        <Label Content="Смещение X"/>
+                                        <TextBox x:Name="ResultColumnPhraseXOffsetTB" PreviewTextInput="FilterNumbersNegativeOnly" LostFocus="ChangeResultColumnPhraseXOffset"/>
+
+                                        <Label Content="Смещение Y"/>
+                                        <TextBox x:Name="ResultColumnPhraseYOffsetTB" PreviewTextInput="FilterNumbersNegativeOnly" LostFocus="ChangeResultColumnPhraseYOffset"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                
+                                <GroupBox Header="Колонка с местами в топе">
+                                    <StackPanel>
+                                        <CheckBox x:Name="PlaceColumnPhraseIsUnderlined" Margin="0, 5, 0, 0" VerticalAlignment="Center" Click="PlaceColumnPhraseIsUnderlined_Click" ToolTip="Включает или отключает подчёркивание надписи">
+                                            <TextBlock>
+                                            <Run>Подчёркивание</Run>
+                                            <LineBreak/>
+                                            <Run>надписи</Run>
+                                            </TextBlock>
+                                        </CheckBox>
+
+                                        <Label Content="Режим отображения" ToolTip="Режим отображения надписи над колонкой с результатами"/>
+                                        <ComboBox x:Name="ChoosePlaceColumnPhraseShowMode" SelectionChanged="ChangePlaceColumnPhraseShowMode_SelectionChanged">
+                                            <ComboBoxItem Content="Не показывать" ToolTip=""/>
+                                            <ComboBoxItem Content="Только в финале"/>
+                                            <ComboBoxItem Content="Всегда"/>
+                                        </ComboBox>
+
+                                        <Label Content="Тип шрифта" ToolTip="Тип шрифта для панели с предварительным результатом"/>
+                                        <ComboBox x:Name="ChoosePlaceColumnPhraseFontWeight" SelectionChanged="PlaceColumnPhraseFontWeight_SelectionChanged">
+                                            <ComboBoxItem Content="Black"/>
+                                            <ComboBoxItem Content="Bold"/>
+                                            <ComboBoxItem Content="DemiBold"/>
+                                            <ComboBoxItem Content="ExtraBlack"/>
+                                            <ComboBoxItem Content="ExtraBold"/>
+                                            <ComboBoxItem Content="ExtraLight"/>
+                                            <ComboBoxItem Content="Heavy"/>
+                                            <ComboBoxItem Content="Light"/>
+                                            <ComboBoxItem Content="Medium"/>
+                                            <ComboBoxItem Content="Normal"/>
+                                            <ComboBoxItem Content="Regular"/>
+                                            <ComboBoxItem Content="SemiBold"/>
+                                            <ComboBoxItem Content="Thin"/>
+                                            <ComboBoxItem Content="UltraBlack"/>
+                                            <ComboBoxItem Content="UltraBold"/>
+                                            <ComboBoxItem Content="UltraLight"/>
+                                        </ComboBox>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Цвет панели" ToolTip="Цвет шрифта надписи" Margin="0, 0, 0, -8"/>
+                                            <Canvas x:Name="ShowPlaceColumnPhraseFontColor" Background="AliceBlue" Grid.Column="1" Grid.Row="1" Height="20" Margin="5"/>
+                                            <Button x:Name="ChangePlaceColumnPhraseFontColor" Content="Изменить" Grid.Column="0" Grid.Row="1" Margin="5" Click="ChangePlaceColumnPhraseFontColor_Click"/>
+                                        </Grid>
+
+                                        <Label Content="Размер шрифта"/>
+                                        <TextBox x:Name="PlaceColumnPhraseFontSizeTB" PreviewTextInput="FilterNumbersOnly" LostFocus="ChangePlaceColumnPhraseFontSize"/>
+
+                                        <Label Content="Надпись"/>
+                                        <TextBox x:Name="PlaceColumnPhraseTB" LostFocus="ChangePlaceColumnPhrase"/>
+
+                                        <Label Content="Смещение X"/>
+                                        <TextBox x:Name="PlaceColumnPhraseXOffsetTB" PreviewTextInput="FilterNumbersNegativeOnly" LostFocus="ChangePlaceColumnPhraseXOffset"/>
+
+                                        <Label Content="Смещение Y"/>
+                                        <TextBox x:Name="PlaceColumnPhraseYOffsetTB" PreviewTextInput="FilterNumbersNegativeOnly" LostFocus="ChangePlaceColumnPhraseYOffset"/>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+                        </GroupBox>
+                            
                         <GroupBox Header="Панель жюри">
                             <StackPanel>
                                 <Label Content="Ширина панели" ToolTip="Ширина панели жюри"/>

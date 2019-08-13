@@ -48,8 +48,6 @@ namespace ResultViewerWPF.Viewer.Dialogs
                                                        currentRange.Name,
                                                        currentRange.Count,
                                                        new SolidColorBrush(currentRange.CurrentColor)));
-
-
             }
 
             ColorRangeView.ItemsSource = transformedColorRange;

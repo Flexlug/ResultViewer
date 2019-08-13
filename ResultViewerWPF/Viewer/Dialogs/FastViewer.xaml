@@ -13,7 +13,7 @@
             <CheckBox x:Name="ShowValues" Content="Показывать результаты" Foreground="White" HorizontalAlignment="Center" Checked="ShowValues_Checked" Unchecked="ShowValues_Unchecked"/>
             <ComboBox x:Name="ChooseJury"/>
             <CheckBox x:Name="UseTwoCloumns" Content="2 колонки" HorizontalAlignment="Center" Foreground="White" Checked="UseTwoCloumns_Checked" Unchecked="UseTwoCloumns_Unchecked" />
-            <CheckBox x:Name="UseTopColors" Content="Выделять первые 3 места" HorizontalAlignment="Center" Foreground="White" Checked="EnableTopColors" Unchecked="DisableTopColors"/>
+            <CheckBox x:Name="UseTopColors" Content="Отобразить финальную сцену" HorizontalAlignment="Center" Foreground="White" Checked="EnableTopColors" Unchecked="DisableTopColors"/>
             <Button x:Name="SaveButton" Width="125" Height="25" BorderThickness="0" Background="White" Content="Сохранить" Click="SaveButton_Click"/>
         </StackPanel>
         

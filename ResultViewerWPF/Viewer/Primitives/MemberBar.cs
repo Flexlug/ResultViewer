@@ -528,10 +528,10 @@ namespace ResultViewerWPF.Viewer.Primitives
             Canvas.SetLeft(mainPanel, -(Program.Settings.MemberPanelWidth / 2));
             mainPanel.RenderTransformOrigin = new Point(0.5, 0.5);
 
-            //Canvas.SetBottom(MemberBarPanel, 500);
-            //Canvas.SetLeft(MemberBarPanel, 500);
+            // Canvas.SetBottom(MemberBarPanel, 500);
+            // Canvas.SetLeft(MemberBarPanel, 500);
 
-            //Делаем объект невидимым по умолчанию
+            // Делаем объект невидимым по умолчанию
             mainPanel.OpacityMask = new SolidColorBrush(Colors.White);
             mainPanel.Opacity = 0;
 

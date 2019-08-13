@@ -35,6 +35,11 @@ namespace ResultViewerWPF.Viewer
         public bool TwoColumns;
 
         /// <summary>
+        /// Флаг, указывающий, отображается ли сейчас колонка с результатами конкурсантов или нет
+        /// </summary>
+        public bool ResultColumnVisible;
+
+        /// <summary>
         /// Ссылка на панель балла. Необходимо для точно расчёта центра для неё на экране
         /// </summary>
         PointBar pb;
@@ -53,6 +58,7 @@ namespace ResultViewerWPF.Viewer
             pb = _pb;
 
             TwoColumns = Program.Settings.TwoColumns;
+            ResultColumnVisible = Program.Settings.ResultColumnPhraseShowMode == Program.Settings.PhraseShowMode.Always;
         }
 
         /// <summary>
@@ -120,9 +126,94 @@ namespace ResultViewerWPF.Viewer
                                  (int)(Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - Program.Settings.MemberPanelHeight / 2 + Program.Settings.MemberInterval + (Program.Settings.MemberPanelHeight + (Program.Settings.MemberInterval + 1.4)) * PlaceInd));
         }
 
-        public Point LowerFrase(double actualWidth, double actualHeight)
+        /// <summary>
+        /// Возвращает координаты для названия колонки с баллами
+        /// </summary>
+        /// <param name="actualPhraseWidth">Ширина надписи</param>
+        /// <param name="actualPhraseHeight">Высота надписи</param>
+        /// <returns></returns>
+        public Point PointsColumnPhrase(double actualPhraseWidth, double actualPhraseHeight)        
         {
-            return new Point(width / 2 - actualWidth / 2, height / 2 + actualHeight / 2 + Program.Settings.LowerPhraseOffset);
+            if (TwoColumns)
+            {
+                return new Point((width / 2) - Program.Settings.MemberColumnInterval / 2 - Program.Settings.MemberPointsPanelWidth - Program.Settings.MemberPanelWidth + Program.Settings.PointsColumnPhraseXOffset,
+                                 Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - actualPhraseHeight + Program.Settings.PointsColumnPhraseYOffset);
+            }
+            else
+            {
+                return new Point((width / 2) - (Program.Settings.MemberPanelWidth + Program.Settings.MemberPointsPanelWidth) / 2 + actualPhraseWidth / 2 + Program.Settings.PointsColumnPhraseXOffset,
+                                 Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - actualPhraseHeight + Program.Settings.PointsColumnPhraseYOffset);
+            }
+
+            throw new ArgumentException($"Invalid arguments. Can't return a value. actualWidth: {actualPhraseWidth}, actualHeight: {actualPhraseHeight}");
+        }
+
+        /// <summary>
+        /// Возвращает координаты для названия колонки с результатами
+        /// </summary>
+        /// <param name="actualPhraseWidth">Ширина надписи</param>
+        /// <param name="actualPhraseHeight">Высота надписи</param>
+        /// <returns></returns>
+        public Point ResultColumnPhrase(double actualPhraseWidth, double actualPhraseHeight)
+        {
+            if (TwoColumns)
+            {
+                return new Point((width / 2) - Program.Settings.MemberColumnInterval / 2 - Program.Settings.MemberPointsPanelWidth - Program.Settings.MemberPanelWidth - Program.Settings.MemberResultPanelWidth + Program.Settings.ResultColumnPhraseXOffset,
+                                 Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - actualPhraseHeight + Program.Settings.ResultColumnPhraseYOffset);
+            }
+            else
+            {
+                return new Point((width / 2) - (Program.Settings.MemberPanelWidth + Program.Settings.MemberPointsPanelWidth - Program.Settings.MemberResultPanelWidth) / 2 + actualPhraseWidth / 2 + Program.Settings.ResultColumnPhraseXOffset,
+                                 Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - actualPhraseHeight + Program.Settings.ResultColumnPhraseYOffset);
+            }
+
+            throw new ArgumentException($"Invalid arguments. Can't return a value. actualWidth: {actualPhraseWidth}, actualHeight: {actualPhraseHeight}");
+        }
+
+        /// <summary> 
+        /// Возвращает координаты для названия колонки с местом в топе
+        /// </summary>
+        /// <param name="actualPhraseWidth">Ширина надписи</param>
+        /// <param name="actualPhraseHeight">Высота надписи</param>
+        /// <param name="ResultIsVisible">Отображаются ли на данный момент панели с результатами участников</param>
+        /// <returns></returns>
+        public Point PlaceColumnPhrase(double actualPhraseWidth, double actualPhraseHeight, bool ResultIsVisible)
+        {
+            if (TwoColumns)
+            {
+                return new Point((width / 2) - Program.Settings.MemberColumnInterval / 2 - Program.Settings.MemberPointsPanelWidth - Program.Settings.MemberPanelWidth - Program.Settings.MemberResultPanelWidth - 
+                    Program.Settings.MemberPlaceStrokeWidth + Program.Settings.PlaceColumnPhraseXOffset - (ResultIsVisible ? Program.Settings.MemberResultPanelWidth : 0),
+                                 Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - actualPhraseHeight + Program.Settings.PlaceColumnPhraseYOffset);
+            }
+            else
+            {
+                return new Point((width / 2) - (Program.Settings.MemberPanelWidth + Program.Settings.MemberPointsPanelWidth + Program.Settings.MemberResultPanelWidth + Program.Settings.MemberPlaceStrokeWidth) / 2 + actualPhraseWidth / 2 + Program.Settings.PlaceColumnPhraseXOffset - (ResultIsVisible ? Program.Settings.MemberResultPanelWidth : 0),
+                                 Program.Settings.TopJuryInterval + Program.Settings.JuryPanelHeight + Program.Settings.JuryMemberOffset - actualPhraseHeight + Program.Settings.PlaceColumnPhraseYOffset);
+            }
+
+            throw new ArgumentException($"Invalid arguments. Can't return a value. actualWidth: {actualPhraseWidth}, actualHeight: {actualPhraseHeight}");
+        }
+
+        /// <summary>
+        /// Возвращает координаты для названия колонки с местом в топе
+        /// </summary>
+        /// <param name="actualPhraseWidth">Ширина надписи</param>
+        /// <param name="actualPhraseHeight">Высота надписи</param>
+        /// <returns></returns>
+        public Point PlaceColumnPhrase(double actualPhraseWidth, double actualPhraseHeight)
+        {
+            return PlaceColumnPhrase(actualPhraseWidth, actualPhraseHeight, ResultColumnVisible);
+        }
+
+        /// <summary>
+        /// Возвращает координаты для нижней фразы
+        /// </summary>
+        /// <param name="actualPhraseWidth">Ширина нижней фразы (необходима для центрирования)</param>
+        /// <param name="actualPhraseHeight">Высота нижней фразы (необходима для центрирования)</param>
+        /// <returns></returns>
+        public Point LowerFrase(double actualPhraseWidth, double actualPhraseHeight)
+        {
+            return new Point(width / 2 - actualPhraseWidth / 2, height / 2 + actualPhraseHeight / 2 + Program.Settings.LowerPhraseOffset);
         }
     }
 }

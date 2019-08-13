@@ -16,6 +16,7 @@ using System.IO;
 using System.Diagnostics;
 
 using ResultViewerWPF.Viewer.Primitives;
+using ResultViewerWPF.Viewer.Primitives.ColumnTextBar;
 
 namespace ResultViewerWPF.Viewer
 {
@@ -31,13 +32,32 @@ namespace ResultViewerWPF.Viewer
 
         CoordinatesProvider coordinates;
 
+        TextBar lowerPhrase;
+
+        PointColumnTextBar pointColumnPhrase;
+        ResultColumnTextBar resultColumnPhrase;
+        PlaceColumnTextBar placeColumnPhrase;
+
         double[] finalPoints = null;
+
+        /// <summary>
+        /// Определяет, можно ли использовать ColorRangeList в данном случае
+        /// </summary>
+        bool CanUseColorConfiguration = true;
 
         public FastViewer(Logic _appLogic)
         {
             InitializeComponent();
 
             this.appLogic = _appLogic;
+
+            // Нижняя фраза
+            lowerPhrase = new TextBar(mainCanvas);
+
+            // Надписи к колонкам
+            pointColumnPhrase = new PointColumnTextBar(mainCanvas);
+            resultColumnPhrase = new ResultColumnTextBar(mainCanvas);
+            placeColumnPhrase = new PlaceColumnTextBar(mainCanvas);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -104,6 +124,12 @@ namespace ResultViewerWPF.Viewer
                 UseTopColors.IsChecked = false;
             }
 
+            // Определение поведения надписей к колонкам, в зависимости от заданных настроек
+            if (Program.Settings.ShowMemberResultMode != Program.Settings.ResultShowMode.AlwaysVisible)
+                coordinates.ResultColumnVisible = false;
+            else
+                coordinates.ResultColumnVisible = true;
+
             // Инициализация просмотра баллов
 
             // Заполнение ComboBox-а
@@ -128,6 +154,21 @@ namespace ResultViewerWPF.Viewer
 
             ShowValues.IsChecked = false;
 
+            // Проверим, используем ли мы нестандартное цветовое выделение
+            if (Program.Settings.UseColorRanges)
+                // Проверим, можно ли использовать ColorRangeList
+                if (appLogic.PointsCollisionsExists())
+                {
+                    CanUseColorConfiguration = false;
+                    Program.Warnings.ShowLogicCollisionWarning();
+                }
+
+            // Проверим, можно ли вообще отображать результаты участников. Если нет, то отключаем соответствующий CheckBox
+            if (Program.Settings.ShowMemberResultMode == Program.Settings.ResultShowMode.Hidden)
+            {
+                ShowValues.IsEnabled = false;
+            }
+
             // Включим показ финала
             SetJury(ChooseJury.SelectedIndex);
 
@@ -136,6 +177,24 @@ namespace ResultViewerWPF.Viewer
             // Проявим фон
             mainCanvas.Background = new SolidColorBrush(Colors.Black);
             GraphicsEngine.BcgAppear(mainCanvas.Background);
+
+            bool resultsVisible = true;
+
+            // Определение поведения, в зависимости от отображаемых колонок
+            if (Program.Settings.ShowMemberResultMode != Program.Settings.ResultShowMode.AlwaysVisible)
+                resultsVisible = false;
+
+            // Перемещение и проявлений надписей к колонкам
+            GraphicsEngine.MoveToInstant(pointColumnPhrase, coordinates.PointsColumnPhrase(pointColumnPhrase.GetPanelWidth(), pointColumnPhrase.GetPanelHeight()));
+            GraphicsEngine.barAppear(pointColumnPhrase, 1);
+            GraphicsEngine.MoveToInstant(placeColumnPhrase, coordinates.PlaceColumnPhrase(placeColumnPhrase.GetPanelWidth(), placeColumnPhrase.GetPanelHeight(), resultsVisible));
+            GraphicsEngine.barAppear(placeColumnPhrase, 1);
+            GraphicsEngine.MoveToInstant(resultColumnPhrase, coordinates.ResultColumnPhrase(resultColumnPhrase.GetPanelWidth(), resultColumnPhrase.GetPanelHeight()));
+            GraphicsEngine.barAppear(resultColumnPhrase, resultsVisible ? 1 : 0);
+
+            // Перемещение и проявление нижней фразы
+            GraphicsEngine.MoveToInstant(lowerPhrase, coordinates.LowerFrase(lowerPhrase.GetPanelWidth(), lowerPhrase.GetPanelHeight()));
+            GraphicsEngine.barAppear(lowerPhrase, 1);
         }
 
         /// <summary>
@@ -307,6 +366,8 @@ namespace ResultViewerWPF.Viewer
             if ((!ShowValues.IsChecked ?? false) && memberPanels[0].ValueVisible)
                 foreach (MemberBar mem in memberPanels)
                     mem.ToggleValue();
+
+            TooglePhrases(ShowValues.IsChecked ?? false);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -364,40 +425,79 @@ namespace ResultViewerWPF.Viewer
             coordinates.TwoColumns = false;
             UpdateMembersLayout();
         }
+
+        /// <summary>
+        /// Заново расставляет все объекты в соответствии с инициализированным CoordinatesProvider
+        /// </summary>
         private void UpdateMembersLayout()
         {
             // Заново расставим панели
             for (int i = 0; i < memberPanels.Count; i++)
                 GraphicsEngine.MoveTo(memberPanels[i], coordinates.Member(i));
+
+            // Перемещение и проявлений надписей к колонкам
+            GraphicsEngine.MoveTo(pointColumnPhrase, coordinates.PointsColumnPhrase(pointColumnPhrase.GetPanelWidth(), pointColumnPhrase.GetPanelHeight()));
+            GraphicsEngine.MoveTo(placeColumnPhrase, coordinates.PlaceColumnPhrase(placeColumnPhrase.GetPanelWidth(), placeColumnPhrase.GetPanelHeight()));
+            GraphicsEngine.MoveTo(resultColumnPhrase, coordinates.ResultColumnPhrase(resultColumnPhrase.GetPanelWidth(), resultColumnPhrase.GetPanelHeight()));
         }
 
         private void EnableTopColors(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < memberPanels.Count; i++)
+            // Сбросим цветовое выделение
+            foreach (MemberBar member in memberPanels)
+                GraphicsEngine.ChangeMemberColor(member, Program.Settings.MemberPanelColor);
+
+            // Если нельзя использовать ColorRangeList, то просто подсвечиваем первые три места
+            // Так же поступаем, если отображение нестандартной конфигурации выключено
+            if (!CanUseColorConfiguration || !Program.Settings.UseColorRanges)
             {
-                if (memberPanels[i].Place == 1)
+                for (int i = 0; i < memberPanels.Count; i++)
                 {
-                    GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelFirstPlace);
-                }
-                else
-                {
-                    if (memberPanels[i].Place == 2)
+                    if (memberPanels[i].Place == 1)
                     {
-                        GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelSecondPlace);
+                        GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelFirstPlace);
                     }
                     else
                     {
-                        if (memberPanels[i].Place == 3)
+                        if (memberPanels[i].Place == 2)
                         {
-                            GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelThirdPlace);
+                            GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelSecondPlace);
                         }
                         else
                         {
-                            GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelOtherPlaces);
+                            if (memberPanels[i].Place == 3)
+                            {
+                                GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelThirdPlace);
+                            }
+                            else
+                            {
+                                GraphicsEngine.ChangeMemberColor(memberPanels[i], Program.Settings.MemberPanelOtherPlaces);
+                            }
                         }
                     }
+                };
+            }
+            else
+            {
+                int sumOfRanges = Program.Settings.ColorRangeList.Select(x => ((Viewer.ColorRange)x).Count).Sum();
+                int currentCell = 0;
+                for (int rangeCount = 0; rangeCount < Program.Settings.ColorRangeList.Count; rangeCount++)
+                {
+                    int rangeLimit = Program.Settings.ColorRangeList.ElementAt(rangeCount).Count;
+                    for (int i = rangeLimit; i > 0; i--)
+                    {
+                        // Если дошли до последнего участнкиа, то останавливаем цикл
+                        if (currentCell == memberPanels.Count)
+                            return;
+
+                        // Присвоим новый цвет
+                        GraphicsEngine.ChangeMemberColor(memberPanels[currentCell], Program.Settings.ColorRangeList.ElementAt(rangeCount).CurrentColor);
+
+                        // Перейдём на следующую ячейку
+                        currentCell++;
+                    }
                 }
-            };
+            }
         }
         
         private void DisableTopColors(object sender, RoutedEventArgs e)
@@ -411,6 +511,8 @@ namespace ResultViewerWPF.Viewer
         /// </summary>
         private void ShowValues_Checked(object sender, RoutedEventArgs e)
         {
+            coordinates.ResultColumnVisible = ((CheckBox)sender).IsChecked ?? false;
+
             if (ChooseJury.SelectedIndex == ChooseJury.Items.Count - 1)
             {
                 e.Handled = true;
@@ -418,7 +520,9 @@ namespace ResultViewerWPF.Viewer
             else
             {
                 foreach (MemberBar member in memberPanels)
-                    member.ToggleValue();
+                        member.ToggleValue();
+
+                TooglePhrases(coordinates.ResultColumnVisible);
             }
         }
 
@@ -428,6 +532,29 @@ namespace ResultViewerWPF.Viewer
         private void ShowValues_Unchecked(object sender, RoutedEventArgs e)
         {
             ShowValues_Checked(sender, e);
+        }
+
+        /// <summary>
+        /// Изменяет отображение надписей к колонкам в зависимости от отображаемых колонок
+        /// </summary>
+        /// <param name="resultsVisible"></param>
+        private void TooglePhrases(bool resultsVisible)
+        {
+            if (resultsVisible)
+            {
+                GraphicsEngine.MoveTo(resultColumnPhrase, coordinates.ResultColumnPhrase(resultColumnPhrase.mainPanel.ActualWidth, resultColumnPhrase.mainPanel.ActualHeight));
+                GraphicsEngine.MoveTo(placeColumnPhrase, coordinates.PlaceColumnPhrase(placeColumnPhrase.mainPanel.ActualWidth, placeColumnPhrase.mainPanel.ActualHeight));
+                GraphicsEngine.barAppear(resultColumnPhrase, 1);
+            }
+            else
+            {
+                GraphicsEngine.Disappear(resultColumnPhrase);
+                GraphicsEngine.Wait(Program.Settings.AnimAppearTime, (ee, v) =>
+                {
+                    GraphicsEngine.MoveTo(resultColumnPhrase, coordinates.ResultColumnPhrase(resultColumnPhrase.mainPanel.ActualWidth, resultColumnPhrase.mainPanel.ActualHeight));
+                    GraphicsEngine.MoveTo(placeColumnPhrase, coordinates.PlaceColumnPhrase(placeColumnPhrase.mainPanel.ActualWidth, placeColumnPhrase.mainPanel.ActualHeight));
+                });
+            }
         }
 
         /// <summary>

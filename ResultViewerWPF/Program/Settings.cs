@@ -161,8 +161,6 @@ namespace ResultViewerWPF.Program
         /// </summary>
         public static SolidColorBrush MemberNameFontColor = Brushes.Black;
 
-
-        // TODO: Проверить совместимость типа SolidColorBrush И Brush в данной ситуации
         /// <summary>
         /// Стиль шрифта для баллов участника
         /// </summary>
@@ -223,6 +221,11 @@ namespace ResultViewerWPF.Program
             new ColorRange("Второе место", 1, MemberPanelSecondPlace),
             new ColorRange("Третье место", 1, MemberPanelThirdPlace)
         });
+
+        /// <summary>
+        /// Включает или отключает выделение участников настраиваемыми цветами
+        /// </summary>
+        public static bool UseColorRanges = true;
 
         #endregion
 
@@ -548,6 +551,147 @@ namespace ResultViewerWPF.Program
         /// </summary>
         public static string FinalPhrase = "Поздравляем победителей!";
 
+        /// <summary>
+        /// Режим отображения фраз
+        /// </summary>
+        public enum PhraseShowMode
+        {
+            /// <summary>
+            /// Не показывать фразу
+            /// </summary>
+            Never,
+
+            /// <summary>
+            /// Показывать только на финальном экране
+            /// </summary>
+            OnlyOnFinalScreen,
+
+            /// <summary>
+            /// Показывать всегда
+            /// </summary>
+            Always
+        }
+
+        /// <summary>
+        /// Режим отображения названия колонки с баллами
+        /// </summary>
+        public static PhraseShowMode PointsColumnPhraseShowMode = PhraseShowMode.Always;    // TODO    VIS SET    PhraseShowMode PointsColumnPhraseShowMode = PhraseShowMode.Always;
+
+        /// <summary>
+        /// Включает или отключает подчёркивание названия колонки с баллами
+        /// </summary>
+        public static bool PointsColumnPhraseIsUnderlined = true;    // TODO    VIS SET    bool PointsColumnPhraseIsUnderLined = true;
+
+        /// <summary>
+        /// Стиль шрифта для названия колонки с баллами
+        /// </summary>
+        public static FontWeight PointsColumnPhraseFontWeight = FontWeights.Normal;         // TODO    VIS SET    FontWeight PointsColumnPhraseFontWeight = FontWeights.Normal;
+
+        /// <summary>
+        /// Цвет шрифта для названия колонки с баллами
+        /// </summary>
+        public static Color PointsColumnPhraseFontColor = Colors.Red;                     // TODO    IO VIS SET    Color PointsColumnPhraseFontColor = Colors.Black;
+
+        /// <summary>
+        /// Размер шрифта для названия колонки с баллами
+        /// </summary>
+        public static double PointsColumnPhraseFontSize = 14;                               // TODO    IO VIS SET    double PointsColumnPhraseFontSize = 12;
+
+        /// <summary>
+        /// Название колонки с баллами
+        /// </summary>
+        public static string PointsColumnPhrase = "Баллы";                                  // TODO    VIS SET    string PointsColumnPhrase = "Баллы"
+
+        /// <summary>
+        /// Смещение фразы по горизонтали
+        /// </summary>
+        public static double PointsColumnPhraseXOffset = -2;                                 // TODO    VIS SET    double PointsColumnPhraseXOffset = 0;
+
+        /// <summary>
+        /// Смещение фразы по вертикали
+        /// </summary>
+        public static double PointsColumnPhraseYOffset = -8;                                 // TODO    VIS SET    double PointsColumnPhraseYOffset = 0;
+
+        /// <summary>
+        /// Режим отображения названия колонки с результатами
+        /// </summary>
+        public static PhraseShowMode ResultColumnPhraseShowMode = PhraseShowMode.Never;    // TODO    VIS SET    PhraseShowMode ResultColumnPhraseShowMode = PhraseShowMode.Always;
+
+        /// <summary>
+        /// Включает или отключает подчёркивание названия колонки с результатами
+        /// </summary>
+        public static bool ResultColumnPhraseIsUnderlined = true;    // TODO    VIS SET    bool ResultColumnPhraseIsUnderlined = true;
+
+        /// <summary>
+        /// Стиль шрифта для названия колонки с результатами
+        /// </summary>
+        public static FontWeight ResultColumnPhraseFontWeight = FontWeights.Normal;         // TODO    IO VIS SET    FontWeight ResultColumnPhraseFontWeight = FontWeights.Normal;
+
+        /// <summary>
+        /// Цвет шрифта для названия колонки с результатами
+        /// </summary>
+        public static Color ResultColumnPhraseFontColor = Colors.Red;                       // TODO    IO VIS SET    Color ResultColumnPhraseFontColor = Colors.Red;
+
+        /// <summary>
+        /// Размер шрифта для названия колонки с результатами
+        /// </summary>
+        public static double ResultColumnPhraseFontSize = 14;                               // TODO    IO VIS SET    double ResultColumnPhraseFontSize = 12;
+
+        /// <summary>
+        /// Название колонки с результатами
+        /// </summary>
+        public static string ResultColumnPhrase = "Результаты";                             // TODO    VIS SET    string ResultColumnPhrase = "Результаты"
+
+        /// <summary>
+        /// Смещение фразы по горизонтали
+        /// </summary>
+        public static double ResultColumnPhraseXOffset = -4;                                 // TODO    VIS SET    double ResultColumnPhraseXOffset = 0;
+
+        /// <summary>
+        /// Смещение фразы по вертикали
+        /// </summary>
+        public static double ResultColumnPhraseYOffset = -7;                                 // TODO    VIS SET    double ResultColumnPhraseYOffset = 0;
+
+        /// <summary>
+        /// Режим отображения названия колонки с местом в топе
+        /// </summary>
+        public static PhraseShowMode PlaceColumnPhraseShowMode = PhraseShowMode.Always;     // TODO    VIS SET    PhraseShowMode PlaceColumnPhraseShowMode = PhraseShowMode.Always;
+
+        /// <summary>
+        /// Доволнительные параметры отображения названия колонки с местами в топе
+        /// </summary>
+        public static bool PlaceColumnPhraseIsUnderlined = true;     // TODO    VIS SET    bool PlaceColumnPhraseIsUnderlined = true;
+
+        /// <summary>
+        /// Стиль шрифта для названия колонки с местами в топе
+        /// </summary>
+        public static FontWeight PlaceColumnPhraseFontWeight = FontWeights.Normal;         // TODO    IO VIS SET    FontWeight PlaceColumnPhraseFontWeight = FontWeights.Normal;
+
+        /// <summary>
+        /// Цвет шрифта для названия колонки с местами в топе
+        /// </summary>
+        public static Color PlaceColumnPhraseFontColor = Colors.Red;                       // TODO    IO VIS SET    Color PlaceColumnPhraseFontColor = Colors.Red;
+
+        /// <summary>
+        /// Размер шрифта для названия колонки с местами в топе
+        /// </summary>
+        public static double PlaceColumnPhraseFontSize = 14;                               // TODO    IO VIS SET    double PlaceColumnPhraseFontSize = 12;
+
+        /// <summary>
+        /// Название колонки с местом в топе
+        /// </summary>
+        public static string PlaceColumnPhrase = "Место";                                   // TODO    VIS SET    string PlaceColumnPhrase = "Место"
+
+        /// <summary>
+        /// Смещение фразы по горизонтали
+        /// </summary>
+        public static double PlaceColumnPhraseXOffset = 2;                                  // TODO    VIS SET    double PlaceColumnPhraseXOffset = 0;
+
+        /// <summary>
+        /// Смещение фразы по вертикали
+        /// </summary>
+        public static double PlaceColumnPhraseYOffset = -8;                                  // TODO    VIS SET    double PlaceColumnPhraseYOffset = 0;
+
         #endregion
 
         #region Нижняя фраза
@@ -565,12 +709,12 @@ namespace ResultViewerWPF.Program
         /// <summary>
         /// Расстояние между нижним краем экрана и нижним уведомлением
         /// </summary>
-        public static double LowerPhraseOffset = 300; // TODO
+        public static double LowerPhraseOffset = 300;
 
         /// <summary>
         /// Размер шрифта для нижней фразы
         /// </summary>
-        public static double LowerPhraseFontSize = 30; // TODO
+        public static double LowerPhraseFontSize = 30;
 
         /// <summary>
         /// Режим отображения нижней фразы
@@ -601,7 +745,7 @@ namespace ResultViewerWPF.Program
         /// <summary>
         /// Текст нижнего уведомления
         /// </summary>
-        public static string LowerPhrase = "Н - не явившиеся на конкурс \nX - не приславшие конкурсную работу"; // TODO
+        public static string LowerPhrase = "Н - не явившиеся на конкурс \nX - не приславшие конкурсную работу";
 
         #endregion
 
