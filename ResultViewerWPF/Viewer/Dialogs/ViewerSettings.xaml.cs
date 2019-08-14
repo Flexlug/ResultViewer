@@ -267,6 +267,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
             PlaceColumnPhraseTB.Text = Program.Settings.PlaceColumnPhrase;
             PlaceColumnPhraseXOffsetTB.Text = Program.Settings.PlaceColumnPhraseXOffset.ToString();
             PlaceColumnPhraseYOffsetTB.Text = Program.Settings.PlaceColumnPhraseYOffset.ToString();
+            ChangeShowAverageResults.IsChecked = Program.Settings.ShowAverageResults;
 
             LowerPhraseTB.Document.LineHeight = 0.1;
 
@@ -521,6 +522,8 @@ namespace ResultViewerWPF.Viewer.Dialogs
             Program.Settings.PlaceColumnPhrase = "Место";
             Program.Settings.PlaceColumnPhraseXOffset = 2;
             Program.Settings.PlaceColumnPhraseYOffset = -8;
+
+            Program.Settings.ShowAverageResults = false;
 
 
             MessageBox.Show("Установлены настройки по-умолчанию", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Asterisk);
@@ -1361,6 +1364,7 @@ namespace ResultViewerWPF.Viewer.Dialogs
         private void PointsColumnPhraseIsUnderlined_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.PointsColumnPhraseIsUnderlined);
         private void ResultColumnPhraseIsUnderlined_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.ResultColumnPhraseIsUnderlined);
         private void PlaceColumnPhraseIsUnderlined_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.PlaceColumnPhraseIsUnderlined);
+        private void ChangeShowAverageResults_Click(object sender, RoutedEventArgs e) => UpdateValueFromCheckBox(sender as CheckBox, ref Program.Settings.ShowAverageResults);
 
         private void ChangeFinalPhrase(object sender, RoutedEventArgs e) => Program.Settings.FinalPhrase = (sender as TextBox).Text ?? Program.Settings.FinalPhrase;
         private void ChangePointsColumnPhrase(object sender, RoutedEventArgs e) => Program.Settings.PointsColumnPhrase = (sender as TextBox).Text ?? Program.Settings.PointsColumnPhrase;

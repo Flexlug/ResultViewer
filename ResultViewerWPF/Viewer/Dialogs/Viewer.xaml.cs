@@ -21,7 +21,6 @@ using ResultViewerWPF.Viewer.Primitives;
 using ResultViewerWPF.Viewer.Primitives.ColumnTextBar;
 
 namespace ResultViewerWPF.Viewer
-
 {
     /// <summary>
     /// Логика взаимодействия для Viewer.xaml
@@ -35,6 +34,7 @@ namespace ResultViewerWPF.Viewer
         {
             ShowField,
             ShowingPoints,
+            Average,
             FinalScreen
         }
 
@@ -87,6 +87,11 @@ namespace ResultViewerWPF.Viewer
         /// Коллекция, содержащая в себе визуальную составлающую жюри
         /// </summary>
         List<JuryBar> juryPanels = new List<JuryBar>();
+
+        /// <summary>
+        /// Финальная фраза
+        /// </summary>
+        JuryBar finalBar;
 
         /// <summary>
         /// Панель с баллом участника
@@ -429,9 +434,11 @@ namespace ResultViewerWPF.Viewer
                                         mem.IsChosen = false;
                                         mem.IsColored = false;
                                     }
+
                                     // Скрываем результаты каждого участника
-                                    if (mem.ValueVisible)
-                                        mem.ToggleValue();
+                                    if (Program.Settings.ShowMemberResultMode != Program.Settings.ResultShowMode.AlwaysVisible)
+                                        if (mem.ValueVisible)
+                                            mem.ToggleValue();
 
                                     // Обновим баллы участников
                                     if (memberValues != null)
@@ -539,7 +546,7 @@ namespace ResultViewerWPF.Viewer
                                 }
 
                                 // Показываем финальную фразу
-                                JuryBar finalBar = new JuryBar(mainCanvas, Program.Settings.FinalPhrase);
+                                finalBar = new JuryBar(mainCanvas, Program.Settings.FinalPhrase);
                                 GraphicsEngine.Disappear(juryPanels[currentJury]);
                                 GraphicsEngine.MoveTo(finalBar, coordinates.Jury());
                                 GraphicsEngine.Appear(finalBar, (obj, ev) =>
@@ -569,29 +576,52 @@ namespace ResultViewerWPF.Viewer
                                 if (lowerPhrase.IsVisible)
                                     GraphicsEngine.Disappear(lowerPhrase);
 
-                                // Завершаем показ, включаем "заглушку"
-                                currentState = ShowState.FinalScreen;
+                                // Проверяем, каков же будет следующий шаг
+                                if (Program.Settings.ShowAverageResults)
+                                    // Отображение экрана со средним арифметическим баллов
+                                    currentState = ShowState.Average;
+                                else
+                                    // Завершаем показ, включаем "заглушку"
+                                    currentState = ShowState.FinalScreen;
                             }
                         }
+                        break;
 
-                        //// Балл появляется
-                        //graphics.MoveToInstant(pointBar, coordinates.PointBar(-1));
-                        //graphics.Appear(pointBar, (obj, ev) =>
-                        //{
-                        //    // Балл прилетает к участнику
-                        //    graphics.Disappear(pointBar);
-                        //    graphics.MoveTo(pointBar, coordinates.PointBar(i), (obg, es) =>
-                        //    {
-                        //        // Балл присваивается
-                        //        memberPanels[i].NumOfPoints += 55;
-                        //        memberPanels = memberPanels.OrderByDescending(x => x.NumOfPoints).ToList();
+                    case ShowState.Average:
 
-                        //        // Перестановка участников
-                        //        for (int i = 0; i < memberPanels.Count; i++)
-                        //            graphics.MoveTo(memberPanels[i], coordinates.Member(i));
-                        //    });
-                        //});
+                        #region Подготовка к показу
 
+                        // Скроем все надписи к колонкам
+                        isBusy = true;
+                        GraphicsEngine.Disappear(pointPhrase);
+                        GraphicsEngine.Disappear(resultPhrase);
+                        GraphicsEngine.Disappear(placePhrase);
+
+                        GraphicsEngine.Disappear(finalBar, (ev, v) => {
+                            isBusy = false;
+                        });
+                        
+
+                        // Вычисляем среднее арифметическое баллов
+                        double[][] allPoints = appLogic.GetPoints();
+                        double[] average = new double[appLogic.GetMemberCount()];
+
+                        for (int i = 0; i < appLogic.GetMemberCount(); i++)
+                        {
+                            for (int ii = 0; ii < appLogic.GetJuryCount(); ii++)
+                                average[i] += allPoints[ii][i];
+
+                            average[i] /= appLogic.GetJuryCount();
+                        }
+
+                        #endregion
+
+                        // Проставим высчитанные средние баллы
+                        for (int i = 0; i < memberPanels.Count; i++)
+                            memberPanels.Find(x => x.ID == i).Points = average[i];
+
+                        // Завершаем показ, включаем "заглушку"
+                        currentState = ShowState.FinalScreen;
 
                         break;
 

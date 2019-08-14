@@ -862,6 +862,11 @@
                                     <Label Content="VideoBackground" ToolTip="Включает или отключает видео на фоне" Margin="0, 0, 0, 0"/>
                                 </StackPanel>
 
+                                <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0, 0, 0, -8">
+                                    <CheckBox x:Name="ChangeShowAverageResults" VerticalAlignment="Center" Click="ChangeShowAverageResults_Click"/>
+                                    <Label Content="ShowAverageResults" ToolTip="Отображать в конце показа среднее арифметическое всех баллов" Margin="0, 0, 0, 0"/>
+                                </StackPanel>
+
                                 <Label Content="VideoPath" ToolTip="Путь к файлу видео"/>
                                 <TextBox x:Name="VideoPathTB" IsReadOnly="True" PreviewMouseDown="ChangeVideoChange_MouseDown"/>
 

@@ -348,6 +348,7 @@ namespace ResultViewerWPF.Program
             settings.Add(new XElement("PlaceColumnPhrase", new XAttribute("Value", Program.Settings.PlaceColumnPhrase)));
             settings.Add(new XElement("PlaceColumnPhraseXOffset", new XAttribute("Value", Program.Settings.PlaceColumnPhraseXOffset)));
             settings.Add(new XElement("PlaceColumnPhraseYOffset", new XAttribute("Value", Program.Settings.PlaceColumnPhraseYOffset)));
+            settings.Add(new XElement("ShowAverageResults", new XAttribute("Value", Program.Settings.ShowAverageResults)));
 
             #endregion
 
@@ -1024,7 +1025,10 @@ namespace ResultViewerWPF.Program
 
                     if (tryGetSingleNode(settings, "PlaceColumnPhraseYOffset"))
                         Program.Settings.PlaceColumnPhraseYOffset = getDouble("Value");
-                    
+
+                    if (tryGetSingleNode(settings, "ShowAverageResults"))
+                        Program.Settings.ShowAverageResults = getBool("Value");
+
                     #endregion
 
                     if (errorList.Length != 0)
