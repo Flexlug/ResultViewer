@@ -356,9 +356,9 @@ namespace ResultViewerWPF
                             UpdateDataStatus();
 
                             
-                            // Если присутствуют коллизии, то предупреждаем об этом пользователя
-                            if (AppLogic.PointsCollisionsExists())
-                                Program.Warnings.ShowLogicCollisionWarning();
+                            //// Если присутствуют коллизии, то предупреждаем об этом пользователя
+                            //if (AppLogic.PointsCollisionsExists())
+                            //    Program.Warnings.ShowLogicCollisionWarning();
 
                             // Возвращаем дефолтный FilePath
                             Program.IO.RestoreDefaultPath();

@@ -154,14 +154,14 @@ namespace ResultViewerWPF.Viewer
 
             ShowValues.IsChecked = false;
 
-            // Проверим, используем ли мы нестандартное цветовое выделение
-            if (Program.Settings.UseColorRanges)
-                // Проверим, можно ли использовать ColorRangeList
-                if (appLogic.PointsCollisionsExists())
-                {
-                    CanUseColorConfiguration = false;
-                    Program.Warnings.ShowLogicCollisionWarning();
-                }
+            //// Проверим, используем ли мы нестандартное цветовое выделение
+            //if (Program.Settings.UseColorRanges)
+            //    // Проверим, можно ли использовать ColorRangeList
+            //    if (appLogic.PointsCollisionsExists())
+            //    {
+            //        CanUseColorConfiguration = false;
+            //        Program.Warnings.ShowLogicCollisionWarning();
+            //    }
 
             // Проверим, можно ли вообще отображать результаты участников. Если нет, то отключаем соответствующий CheckBox
             if (Program.Settings.ShowMemberResultMode == Program.Settings.ResultShowMode.Hidden)

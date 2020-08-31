@@ -141,9 +141,9 @@ namespace ResultViewerWPF.Viewer
             // Получим ссылку на логику
             appLogic = logic;
 
-            // Проверим, можно ли использовать нестандартные конфигурации цветов
-            if (appLogic.PointsCollisionsExists())
-                CanUseColorConfiguration = false;
+            //// Проверим, можно ли использовать нестандартные конфигурации цветов
+            //if (appLogic.PointsCollisionsExists())
+            //    CanUseColorConfiguration = false;
 
             // Стадия показа: загрузить начальные данные
             currentState = ShowState.ShowField;

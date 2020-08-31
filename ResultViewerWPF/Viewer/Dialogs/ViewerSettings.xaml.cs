@@ -123,11 +123,11 @@ namespace ResultViewerWPF.Viewer.Dialogs
                 userLogic = innerLogic;
                 CurrentLogicType = LogicType.User;
 
-                if (userLogic.PointsCollisionsExists())
-                {
-                    ColorConfigurationButton.IsEnabled = false;
-                    CanUseColorRanges = false;
-                }
+                //if (userLogic.PointsCollisionsExists())
+                //{
+                //    ColorConfigurationButton.IsEnabled = false;
+                //    CanUseColorRanges = false;
+                //}
             }
             else
                 CurrentLogicType = LogicType.Test;
